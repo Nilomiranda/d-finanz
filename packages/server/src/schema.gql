@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+  confirmationCode: String!
+  status: UserStatus!
+}
+
+enum UserStatus {
+  ACTIVE
+  UNCONFIRMED_ACCOUNT
+}
+
+type Query {
+  user(id: String!): User!
+}
