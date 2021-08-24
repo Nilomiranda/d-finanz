@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PrismaClient } from '@prisma/client'
+import {PrismaClientType} from "./_types/prismaClientType";
 
 const prisma = new PrismaClient()
+
+export function getPrismaClient(): PrismaClientType {
+  return prisma;
+}
 
 async function startPrismaClient() {
   try {

@@ -1,31 +1,42 @@
 import {Field, Int, ObjectType, EnumOptions, registerEnumType} from "@nestjs/graphql";
+import {IsEmail, IsEnum, IsNotEmpty, IsString, MinLength} from "class-validator";
 
 export enum UserStatus {
   ACTIVE = 'ACTIVE',
   UNCONFIRMED_ACCOUNT = 'UNCONFIRMED_ACCOUNT'
 }
-
 registerEnumType(UserStatus, {
   name: 'UserStatus',
 });
 
+const PASSWORD_MIN_CHARACTERS = 8
+
 @ObjectType()
 export class User {
-  @Field(type => String)
+  @Field(type => String, { nullable: true })
   id: string;
 
-  @Field(type => String)
+  @IsString({ always: true })
+  @IsNotEmpty({ always: true })
+  @Field(type => String, { nullable: true })
   name: string;
 
-  @Field(type => String)
+  @IsEmail({}, { always: true, message: 'Invalid email' })
+  @IsNotEmpty({ always: true })
+  @Field(type => String, { nullable: true })
   email: string
 
-  @Field(type => String)
+  @IsString({ always: true })
+  @IsNotEmpty({ always: true })
+  @MinLength(PASSWORD_MIN_CHARACTERS, { message: `Passwords must have at least ${PASSWORD_MIN_CHARACTERS} characters` })
+  @Field(type => String, { nullable: true })
   password: string;
 
-  @Field(type => String)
+  @IsString({ always: true })
+  @Field(type => String, { nullable: true })
   confirmationCode: string;
 
-  @Field(() => UserStatus)
+  @IsEnum(UserStatus, { always: true })
+  @Field(() => UserStatus, { nullable: false, defaultValue: UserStatus.UNCONFIRMED_ACCOUNT })
   status: UserStatus;
 }

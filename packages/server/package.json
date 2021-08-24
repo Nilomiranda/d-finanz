@@ -25,6 +25,7 @@
     "@nestjs/platform-express": "^6.0.0",
     "@prisma/client": "^2.30.0",
     "apollo-server-express": "2.x.x",
+    "class-validator": "^0.13.1",
     "graphql": "^15.5.1",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
