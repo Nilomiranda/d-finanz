@@ -3,11 +3,11 @@
 # ------------------------------------------------------
 
 type User {
-  id: String!
-  name: String!
-  email: String!
-  password: String!
-  confirmationCode: String!
+  id: String
+  name: String
+  email: String
+  password: String
+  confirmationCode: String
   status: UserStatus!
 }
 
