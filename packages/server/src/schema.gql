@@ -19,3 +19,13 @@ enum UserStatus {
 type Query {
   user(id: String!): User!
 }
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  name: String
+  email: String
+  password: String
+}

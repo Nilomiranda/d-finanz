@@ -1,24 +1,7 @@
-import {
-  Field,
-  Int,
-  ObjectType,
-  EnumOptions,
-  registerEnumType,
-  FieldMiddleware,
-  MiddlewareContext, NextFn
-} from "@nestjs/graphql";
-import {IsEmail, IsEnum, IsNotEmpty, IsString, MinLength} from "class-validator";
-import * as bcrypt from 'bcrypt'
-
-export enum UserStatus {
-  ACTIVE = 'ACTIVE',
-  UNCONFIRMED_ACCOUNT = 'UNCONFIRMED_ACCOUNT'
-}
-registerEnumType(UserStatus, {
-  name: 'UserStatus',
-});
-
-export const PASSWORD_MIN_CHARACTERS = 8
+import {Field, FieldMiddleware, InputType, MiddlewareContext, NextFn} from "@nestjs/graphql";
+import {IsEmail, IsNotEmpty, IsString, MinLength} from "class-validator";
+import {PASSWORD_MIN_CHARACTERS} from "../models/user.model";
+import * as bcrypt from "bcrypt";
 
 const hashPasswordMiddleware: FieldMiddleware = async (context: MiddlewareContext, next: NextFn) => {
   const password = await next()
@@ -28,11 +11,8 @@ const hashPasswordMiddleware: FieldMiddleware = async (context: MiddlewareContex
   return hashedPassword;
 }
 
-@ObjectType()
-export class User {
-  @Field(type => String, { nullable: true })
-  id: string;
-
+@InputType()
+export class CreateUserInput {
   @IsString({ always: true })
   @IsNotEmpty({ always: true })
   @Field(type => String, { nullable: true })
@@ -48,12 +28,4 @@ export class User {
   @MinLength(PASSWORD_MIN_CHARACTERS, { message: `Passwords must have at least ${PASSWORD_MIN_CHARACTERS} characters` })
   @Field(type => String, { nullable: true, middleware: [hashPasswordMiddleware] })
   password: string;
-
-  @IsString({ always: true })
-  @Field(type => String, { nullable: true })
-  confirmationCode: string;
-
-  @IsEnum(UserStatus, { always: true })
-  @Field(() => UserStatus, { nullable: false, defaultValue: UserStatus.UNCONFIRMED_ACCOUNT })
-  status: UserStatus;
 }
