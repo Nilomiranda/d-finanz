@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PrismaClient } from '@prisma/client'
 import {PrismaClientType} from "./_types/prismaClientType";
+import {ValidationPipe} from "@nestjs/common";
 
 const prisma = new PrismaClient()
 
@@ -20,6 +21,7 @@ async function startPrismaClient() {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe({}));
   await app.listen(8090);
   await startPrismaClient()
 }
