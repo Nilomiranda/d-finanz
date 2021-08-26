@@ -12,8 +12,6 @@ export class SessionsService {
 
     const { email, password } = args
 
-    console.log({ email, password })
-
     const user = await prisma.user.findUnique({
       where: {
         email,
