@@ -15,6 +15,11 @@ enum UserStatus {
   UNCONFIRMED_ACCOUNT
 }
 
+type Session {
+  token: String!
+  user: User!
+}
+
 type Query {
   user(id: String!): User!
 }
@@ -22,6 +27,7 @@ type Query {
 type Mutation {
   createUser(input: CreateUserInput!): User!
   confirmAccount(input: ConfirmAccountInput!): User!
+  createSession(input: CreateSessionInput!): Session!
 }
 
 input CreateUserInput {
@@ -33,4 +39,9 @@ input CreateUserInput {
 input ConfirmAccountInput {
   code: String!
   email: String!
+}
+
+input CreateSessionInput {
+  email: String
+  password: String
 }
