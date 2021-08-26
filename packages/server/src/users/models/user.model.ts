@@ -41,5 +41,5 @@ export class User {
 
   @IsEnum(UserStatus, { always: true })
   @Field(() => UserStatus, { nullable: false, defaultValue: UserStatus.UNCONFIRMED_ACCOUNT })
-  status: UserStatus;
+  status: UserStatus | string;
 }

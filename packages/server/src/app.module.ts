@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import {join} from "path";
 import {UsersModule} from "./users/users.module";
+import {SessionsModule} from "./sessions/sessions.module";
 
 
 @Module({
@@ -12,6 +13,7 @@ import {UsersModule} from "./users/users.module";
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     UsersModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
