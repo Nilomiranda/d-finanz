@@ -4,6 +4,8 @@ import {CreateUserInput} from "./dto/createUserInput";
 import {generateRandomCode} from "../_helpers/generateRandomCode";
 import * as bcrypt from "bcrypt";
 import {sendEmailWithTemplate} from "../services/mailjet";
+import {ConfirmAccountInput} from "./dto/confirmAccountInput";
+import {NotFoundException} from "@nestjs/common";
 
 const ACCOUNT_CONFIRMATION_TEMPLATE_NUMBER = 3125538
 
@@ -19,6 +21,31 @@ export class UsersService {
     })
 
     return user
+  }
+
+  async confirmAccount(args: ConfirmAccountInput) {
+    const { email, code } = args
+    const prisma = getPrismaClient()
+    const userToConfirm = await prisma.user.findFirst({
+      where: {
+        email,
+        confirmationCode: code
+      }
+    })
+
+    if (!userToConfirm) {
+      throw new NotFoundException()
+    }
+
+    return prisma.user.update({
+      where: {
+        id: userToConfirm?.id,
+      },
+      data: {
+        confirmationCode: '',
+        status: UserStatus.ACTIVE
+      },
+    })
   }
 
   async getOne(id: string) {

@@ -2,6 +2,7 @@ import {Args, Parent, ResolveField, Resolver, Query, Mutation} from "@nestjs/gra
 import {User} from "./models/user.model";
 import {UsersService} from "./users.service";
 import {CreateUserInput} from "./dto/createUserInput";
+import {ConfirmAccountInput} from "./dto/confirmAccountInput";
 
 @Resolver(of => User)
 export class UsersResolver {
@@ -16,5 +17,10 @@ export class UsersResolver {
   @Mutation(returns => User)
   async createUser(@Args('input') args: CreateUserInput) {
     return this.usersService.create(args)
+  }
+
+  @Mutation(returns => User)
+  async confirmAccount(@Args('input') args: ConfirmAccountInput) {
+    return this.usersService.confirmAccount(args)
   }
 }
