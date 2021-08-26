@@ -19,10 +19,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0",
+    "@nestjs/common": "^8.0.6",
+    "@nestjs/core": "^8.0.6",
     "@nestjs/graphql": "^8.0.2",
-    "@nestjs/platform-express": "^6.0.0",
+    "@nestjs/platform-express": "^8.0.6",
     "@prisma/client": "^2.30.0",
     "apollo-server-express": "2.x.x",
     "bcrypt": "^5.0.1",
