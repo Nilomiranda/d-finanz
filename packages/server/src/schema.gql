@@ -21,7 +21,7 @@ type Session {
 }
 
 type Query {
-  user(id: String!): User!
+  user: User!
 }
 
 type Mutation {
