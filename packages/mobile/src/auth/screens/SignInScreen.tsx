@@ -1,9 +1,14 @@
 import React from 'react'
 import {Text} from "react-native";
+import {Box, Button} from "native-base";
 
 const SignInScreen = () => {
   return (
-    <Text>Sign In Screen</Text>
+    <Box>
+      Sign In Screen
+
+      <Button>Sign In</Button>
+    </Box>
   )
 }
 
