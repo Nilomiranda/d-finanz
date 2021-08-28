@@ -1,32 +1,32 @@
 import React from 'react'
-import {Box, Button, Checkbox, Radio} from "native-base";
+import {Box, Button, Checkbox, Heading, HStack, Link, Radio, Text, VStack} from "native-base";
 import Input from '../../components/forms/Input'
 
-const SignInScreen = () => {
+const SignInScreen = ({ navigation }) => {
+  const handleNavigateToSignUp = () => {
+    navigation?.navigate('SignUp')
+  }
+
   return (
-    <Box>
-      Sign In Screen
+    <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
+      <Heading textAlign={"center"} mb={10}>Sign in</Heading>
 
-      <Button onPress={() => null} variant={"solid"}>Test</Button>
-      <Button onPress={() => null} variant={"outline"}>Test</Button>
-      <Button onPress={() => null} variant={"link"}>Test</Button>
+      <Box mb={5}>
+        <Input label={"Email"} placeholder={"email@domain.com"} />
+      </Box>
 
-      <Button onPress={() => null} variant={"solid"} size={"lg"} colorScheme={"red"}>Test</Button>
-      <Button onPress={() => null} variant={"outline"} size={"lg"} colorScheme={"red"}>Test</Button>
-      <Button onPress={() => null} variant={"link"} size={"lg"} colorScheme={"red"}>Test</Button>
+      <Box mb={5}>
+        <Input label={"Password"} type={"password"} placeholder={"********"} />
+      </Box>
 
-      <Input label="Email" />
-      <Input label="Password" type={"password"} />
-      <Input label="Email" isInvalid={true} errorMessage={"Invalid email"} />
+      <Box mb={5}>
+        <Button size={"lg"}>Sign in</Button>
+      </Box>
 
-      <Checkbox value={"Yes"}>Yes</Checkbox>
-      <Checkbox value={"No"}>No</Checkbox>
-
-      <Radio.Group name={"test"}>
-        <Radio value={"No"} my={1}>No</Radio>
-        <Radio value={"Yes"} my={1}>Yes</Radio>
-      </Radio.Group>
-    </Box>
+      <HStack>
+        <Text>Don't have an account? </Text><Link _text={{ textDecoration: 'underline' }} onPress={handleNavigateToSignUp}>Create one</Link>
+      </HStack>
+    </VStack>
   )
 }
 
