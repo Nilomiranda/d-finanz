@@ -1,14 +1,15 @@
 import React from 'react';
 import {NavigationContainer} from "@react-navigation/native";
 import MainNavigator from "./src/navigators/MainNavigator";
-import { NativeBaseProvider } from 'native-base';
+import {NativeBaseProvider} from 'native-base';
+import { theme } from './src/styles/theme';
 
 export default function App() {
   return (
-    <NativeBaseProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <NativeBaseProvider theme={theme}>
         <MainNavigator />
-      </NavigationContainer>
-    </NativeBaseProvider>
+      </NativeBaseProvider>
+    </NavigationContainer>
   );
 }
