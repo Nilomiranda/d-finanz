@@ -7,6 +7,10 @@ const SignUpScreen = ({ navigation }) => {
     navigation?.navigate('SignIn')
   }
 
+  const handleNavigateToAccountConfirmation = () => {
+    navigation?.navigate('AccountConfirmation')
+  }
+
   return (
     <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
       <Heading textAlign={"center"} mb={10}>Sign up</Heading>
@@ -34,6 +38,10 @@ const SignUpScreen = ({ navigation }) => {
       <HStack>
         <Text>Have an account? </Text><Link _text={{ textDecoration: 'underline' }} onPress={handleNavigateToSignIn}>Sign in</Link>
       </HStack>
+
+      <Box>
+        <Link _text={{ textDecoration: 'underline' }} onPress={handleNavigateToAccountConfirmation}>Confirm my account</Link>
+      </Box>
     </VStack>
   )
 }
