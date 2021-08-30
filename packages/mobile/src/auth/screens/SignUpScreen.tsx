@@ -4,17 +4,17 @@ import Input from "../../components/forms/Input";
 import {useMutation} from "urql";
 
 const SignUpMutation = `
-    mutation($name: String!, $email: String!, $password: String!) {
-      createUser(input: { name: $name, email: $email, password: $password }) {
-        name
-        email
-      }
+  mutation($name: String!, $email: String!, $password: String!) {
+    createUser(input: { name: $name, email: $email, password: $password }) {
+      name
+      email
     }
-  `
+  }
+`
 
 const SignUpScreen = ({ navigation }) => {
   const toast = useToast()
-  const [signUpResult, signUp] = useMutation(SignUpMutation)
+  const [, signUp] = useMutation(SignUpMutation)
 
   const [name, setName] = useState<string>()
   const [email, setEmail] = useState<string>()
@@ -60,10 +60,6 @@ const SignUpScreen = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    console.log('signUpResult', signUpResult)
-  }, [signUpResult])
-
   return (
     <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
       <Heading textAlign={"center"} mb={10}>Sign up</Heading>
@@ -85,7 +81,7 @@ const SignUpScreen = ({ navigation }) => {
       </Box>
 
       <Box mb={5}>
-        <Button size={"lg"} onPress={handleSignUp} isLoading={creatingAccount}>Create account</Button>
+        <Button size={"lg"} onPress={handleSignUp} isLoading={creatingAccount} isLoadingText={"Creating account"}>Create account</Button>
       </Box>
 
       <HStack>

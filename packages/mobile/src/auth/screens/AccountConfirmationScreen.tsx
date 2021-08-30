@@ -1,10 +1,54 @@
 import React, {useState} from 'react'
-import {Box, Button, Heading, HStack, Link, VStack, Text} from "native-base";
+import {Box, Button, Heading, VStack, useToast} from "native-base";
 import Input from "../../components/forms/Input";
+import {useMutation} from "urql";
+
+const AccountConfirmationMutation = `
+  mutation($code: String!, $email: String!) {
+    createUser(input: { code: $code, email: $email }) {
+      name
+      email
+    }
+  }
+`
 
 const AccountConfirmationScreen = ({ route, navigation }) => {
   const [email, setEmail] = useState<string>(route?.params?.email)
   const [code, setCode] = useState('')
+  const [confirmingAccount, setConfirmingAccount] = useState(false)
+
+  const toast = useToast()
+  const [, confirmAccount] = useMutation(AccountConfirmationMutation)
+
+  const handleAccountConfirmed = () => {
+    navigation?.navigate('SignIn', { email })
+  }
+
+  const handleAccountConfirmation = async () => {
+    try {
+      setConfirmingAccount(true)
+      await confirmAccount({
+        code,
+        email,
+      })
+      handleAccountConfirmed()
+      toast.show({
+        description: 'Account confirmed! You are now ready to log in.',
+        status: 'info',
+        isClosable: true,
+        duration: 5000,
+      })
+    } catch (err) {
+      toast.show({
+        description: 'Error confirming your account. Please try again in few moments',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      })
+    } finally {
+      setConfirmingAccount(false)
+    }
+  }
 
   return (
     <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
@@ -19,7 +63,7 @@ const AccountConfirmationScreen = ({ route, navigation }) => {
       </Box>
 
       <Box mb={5}>
-        <Button size={"lg"}>Confirm account</Button>
+        <Button size={"lg"} onPress={handleAccountConfirmation} isLoading={confirmingAccount} isLoadingText={"Confirming account"}>Confirm account</Button>
       </Box>
     </VStack>
   )
