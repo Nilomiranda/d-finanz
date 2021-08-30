@@ -1,8 +1,28 @@
-import React from 'react'
-import {Box, Button, Checkbox, Heading, HStack, Link, Radio, Text, VStack} from "native-base";
+import React, {useState} from 'react'
+import {Box, Button, Checkbox, Heading, HStack, Link, Radio, Text, useToast, VStack} from "native-base";
 import Input from '../../components/forms/Input'
+import {useMutation} from "urql";
 
-const SignInScreen = ({ navigation }) => {
+const SignInMutation = `
+  mutation SignIn($email: String!, $password: String!) {
+    createSession(input: { email: $email, password: $password }) {
+      user {
+        email
+        name
+      }
+      token
+    }
+  }
+`
+
+const SignInScreen = ({ route, navigation }) => {
+  const [email, setEmail] = useState(route?.params?.email || '')
+  const [password, setPassword] = useState('')
+  const [signingIn, setSigningIn] = useState(false)
+
+  const toast = useToast()
+  const [, signIn] = useMutation(SignInMutation)
+
   const handleNavigateToSignUp = () => {
     navigation?.navigate('SignUp')
   }
@@ -11,20 +31,44 @@ const SignInScreen = ({ navigation }) => {
     navigation?.navigate('AccountConfirmation')
   }
 
+  const handleSignedIn = () => {
+    navigation?.navigate('Home')
+  }
+
+  const handleSignIn = async () => {
+    try {
+      setSigningIn(true)
+      await signIn({
+        email,
+        password
+      })
+      handleSignedIn()
+    } catch (err) {
+      toast.show({
+        description: 'Error signing you in. Please try again in few moments',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      })
+    } finally {
+      setSigningIn(false)
+    }
+  }
+
   return (
     <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
       <Heading textAlign={"center"} mb={10}>Sign in</Heading>
 
       <Box mb={5}>
-        <Input label={"Email"} placeholder={"email@domain.com"} />
+        <Input label={"Email"} placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} />
       </Box>
 
       <Box mb={5}>
-        <Input label={"Password"} type={"password"} placeholder={"********"} />
+        <Input label={"Password"} type={"password"} placeholder={"********"} value={password} onChangeText={(value) => setPassword(value)} />
       </Box>
 
       <Box mb={5}>
-        <Button size={"lg"}>Sign in</Button>
+        <Button size={"lg"} isLoading={signingIn} isLoadingText={"Signing in"} onPress={handleSignIn}>Sign in</Button>
       </Box>
 
       <HStack>
