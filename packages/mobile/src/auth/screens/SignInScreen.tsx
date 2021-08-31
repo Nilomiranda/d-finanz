@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import {Box, Button, Checkbox, Heading, HStack, Link, Radio, Text, useToast, VStack} from "native-base";
 import Input from '../../components/forms/Input'
 import {useMutation} from "urql";
+import {NativeStackScreenProps} from "@react-navigation/native-stack";
+import {MainStackParamsList} from "../../navigators/MainNavigator";
 
 const SignInMutation = `
   mutation SignIn($email: String!, $password: String!) {
@@ -15,7 +17,9 @@ const SignInMutation = `
   }
 `
 
-const SignInScreen = ({ route, navigation }) => {
+type SignInScreenProps = NativeStackScreenProps<MainStackParamsList, 'SignIn'>
+
+const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
   const [email, setEmail] = useState(route?.params?.email || '')
   const [password, setPassword] = useState('')
   const [signingIn, setSigningIn] = useState(false)

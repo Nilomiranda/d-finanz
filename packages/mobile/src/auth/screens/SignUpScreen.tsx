@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react'
 import {Box, Button, Heading, HStack, Link, VStack, Text, useToast} from "native-base";
 import Input from "../../components/forms/Input";
 import {useMutation} from "urql";
+import {NativeStackScreenProps} from "@react-navigation/native-stack";
+import {MainStackParamsList} from "../../navigators/MainNavigator";
 
 const SignUpMutation = `
   mutation($name: String!, $email: String!, $password: String!) {
@@ -12,13 +14,15 @@ const SignUpMutation = `
   }
 `
 
-const SignUpScreen = ({ navigation }) => {
+type SignUpScreenProps = NativeStackScreenProps<MainStackParamsList, 'SignUp'>
+
+const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   const toast = useToast()
   const [, signUp] = useMutation(SignUpMutation)
 
-  const [name, setName] = useState<string>()
-  const [email, setEmail] = useState<string>()
-  const [password, setPassword] = useState<string>()
+  const [name, setName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
   const [creatingAccount, setCreatingAccount] = useState(false)
 
   const handleNavigateToSignIn = () => {

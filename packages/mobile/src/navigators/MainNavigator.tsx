@@ -5,7 +5,14 @@ import SignUpScreen from "../auth/screens/SignUpScreen";
 import AccountConfirmationScreen from "../auth/screens/AccountConfirmationScreen";
 import Home from "../auth/screens/Home";
 
-const Stack = createNativeStackNavigator();
+export type MainStackParamsList = {
+  SignIn: { email: string } | undefined;
+  SignUp: undefined;
+  AccountConfirmation: { email: string } | undefined;
+  Home: undefined
+}
+
+const Stack = createNativeStackNavigator<MainStackParamsList>();
 
 function MainNavigator() {
   return (

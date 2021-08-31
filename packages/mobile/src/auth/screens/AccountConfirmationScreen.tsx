@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import {Box, Button, Heading, VStack, useToast} from "native-base";
 import Input from "../../components/forms/Input";
 import {useMutation} from "urql";
+import {NativeStackScreenProps} from "@react-navigation/native-stack";
+import {MainStackParamsList} from "../../navigators/MainNavigator";
 
 const AccountConfirmationMutation = `
   mutation($code: String!, $email: String!) {
@@ -12,8 +14,10 @@ const AccountConfirmationMutation = `
   }
 `
 
-const AccountConfirmationScreen = ({ route, navigation }) => {
-  const [email, setEmail] = useState<string>(route?.params?.email)
+type AccountConfirmationScreenProps = NativeStackScreenProps<MainStackParamsList, 'AccountConfirmation'>
+
+const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScreenProps) => {
+  const [email, setEmail] = useState(route?.params?.email || '')
   const [code, setCode] = useState('')
   const [confirmingAccount, setConfirmingAccount] = useState(false)
 
