@@ -1,9 +1,11 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from "../auth/screens/SignInScreen";
 import SignUpScreen from "../auth/screens/SignUpScreen";
 import AccountConfirmationScreen from "../auth/screens/AccountConfirmationScreen";
 import Home from "../auth/screens/Home";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useQuery} from "urql";
 
 export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
@@ -12,9 +14,42 @@ export type MainStackParamsList = {
   Home: undefined
 }
 
+const CurrentUserQuery = `
+  query CurrentUser {
+    user {
+      name
+      email
+    }
+  }
+`
+
 const Stack = createNativeStackNavigator<MainStackParamsList>();
 
 function MainNavigator() {
+  const [token, setToken] = useState('')
+
+  const [currentUserQueryResult, refetchCurrentUser] = useQuery({
+    query: CurrentUserQuery,
+  })
+
+  const { data, fetching, error } = currentUserQueryResult
+
+  useEffect(() => {
+    refetchCurrentUser({ requestPolicy: 'network-only' })
+  }, [token])
+
+  useEffect(() => {
+    async function getToken() {
+      setToken((await AsyncStorage.getItem('FINANZ_JWT_TOKEN')) || '')
+    }
+
+    getToken()
+  }, [])
+
+  useEffect(() => {
+    console.log('data', data)
+  }, [data])
+
   return (
     <Stack.Navigator initialRouteName="SignIn">
       <Stack.Screen name="SignIn" component={SignInScreen} />
