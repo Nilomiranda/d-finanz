@@ -4,9 +4,11 @@ import Input from '../../components/forms/Input'
 import {useMutation} from "urql";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {MainStackParamsList} from "../../navigators/MainNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { User } from '../../interfaces/user';
 
 const SignInMutation = `
-  mutation SignIn($email: String!, $password: String!) {
+  mutation ($email: String!, $password: String!) {
     createSession(input: { email: $email, password: $password }) {
       user {
         email
@@ -35,18 +37,19 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
     navigation?.navigate('AccountConfirmation')
   }
 
-  const handleSignedIn = () => {
+  const handleSignedIn = (signInResponse: { data: { createSession: { token: string; user: User } } }) => {
+    AsyncStorage.setItem('FINANZ_JWT_TOKEN', signInResponse?.data?.createSession?.token)
     navigation?.navigate('Home')
   }
 
   const handleSignIn = async () => {
     try {
       setSigningIn(true)
-      await signIn({
+      const signInResults = await signIn({
         email,
         password
       })
-      handleSignedIn()
+      handleSignedIn(signInResults as any)
     } catch (err) {
       toast.show({
         description: 'Error signing you in. Please try again in few moments',
@@ -64,7 +67,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
       <Heading textAlign={"center"} mb={10}>Sign in</Heading>
 
       <Box mb={5}>
-        <Input label={"Email"} placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} />
+        <Input label={"Email"} placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} autoCapitalize="none" />
       </Box>
 
       <Box mb={5}>
