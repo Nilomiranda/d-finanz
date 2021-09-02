@@ -6,12 +6,14 @@ import AccountConfirmationScreen from "../auth/screens/AccountConfirmationScreen
 import Home from "../auth/screens/Home";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useQuery} from "urql";
+import LoadingScreen from '../auth/screens/LoadingScreen';
 
 export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
   SignUp: undefined;
   AccountConfirmation: { email: string } | undefined;
   Home: undefined
+  Loading: undefined
 }
 
 const CurrentUserQuery = `
@@ -46,9 +48,21 @@ function MainNavigator() {
     getToken()
   }, [])
 
-  useEffect(() => {
-    console.log('data', data)
-  }, [data])
+  if (fetching) {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    )
+  }
+
+  if (data?.user?.email) {
+    return (
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+      </Stack.Navigator>
+    )
+  }
 
   return (
     <Stack.Navigator initialRouteName="SignIn">
