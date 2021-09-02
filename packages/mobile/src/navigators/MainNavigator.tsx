@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from "../auth/screens/SignInScreen";
 import SignUpScreen from "../auth/screens/SignUpScreen";
 import AccountConfirmationScreen from "../auth/screens/AccountConfirmationScreen";
-import Home from "../auth/screens/Home";
+import TabNavigator from "./TabNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useQuery} from "urql";
 import LoadingScreen from '../auth/screens/LoadingScreen';
@@ -12,7 +12,7 @@ export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
   SignUp: undefined;
   AccountConfirmation: { email: string } | undefined;
-  Home: undefined
+  TabNavigator: undefined
   Loading: undefined
 }
 
@@ -58,8 +58,8 @@ function MainNavigator() {
 
   if (data?.user?.email) {
     return (
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
+      <Stack.Navigator initialRouteName="TabNavigator">
+        <Stack.Screen name="TabNavigator" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     )
   }
@@ -69,7 +69,7 @@ function MainNavigator() {
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="AccountConfirmation" component={AccountConfirmationScreen} />
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="TabNavigator" component={TabNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }
