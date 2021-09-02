@@ -12,7 +12,7 @@ export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
   SignUp: undefined;
   AccountConfirmation: { email: string } | undefined;
-  TabNavigator: undefined
+  Home: undefined
   Loading: undefined
 }
 
@@ -58,8 +58,8 @@ function MainNavigator() {
 
   if (data?.user?.email) {
     return (
-      <Stack.Navigator initialRouteName="TabNavigator">
-        <Stack.Screen name="TabNavigator" component={TabNavigator} options={{ headerShown: false }} />
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     )
   }
@@ -69,7 +69,7 @@ function MainNavigator() {
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="AccountConfirmation" component={AccountConfirmationScreen} />
-      <Stack.Screen name="TabNavigator" component={TabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }
