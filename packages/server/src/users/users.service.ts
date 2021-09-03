@@ -6,6 +6,7 @@ import * as bcrypt from "bcrypt";
 import {sendEmailWithTemplate} from "../services/mailjet";
 import {ConfirmAccountInput} from "./dto/confirmAccountInput";
 import {NotFoundException} from "@nestjs/common";
+import { ForbiddenError } from "apollo-server-errors";
 
 const ACCOUNT_CONFIRMATION_TEMPLATE_NUMBER = 3125538
 
@@ -57,6 +58,16 @@ export class UsersService {
     })
 
     return user
+  }
+
+  async deleteOne(id: string, requestingUser: User) {
+    const prisma = getPrismaClient()
+
+    if (requestingUser?.id !== id) {
+      throw new ForbiddenError("Not allowed")
+    }
+
+    return prisma.user.delete({ where: { id } })
   }
 
   hashPassword(password: string): Promise<string> {

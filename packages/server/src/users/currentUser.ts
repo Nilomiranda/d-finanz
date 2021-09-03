@@ -1,4 +1,4 @@
-import {createParamDecorator, ExecutionContext} from "@nestjs/common";
+import {createParamDecorator, ExecutionContext, UnauthorizedException} from "@nestjs/common";
 import {GqlExecutionContext} from "@nestjs/graphql";
 import { PrismaClient } from '@prisma/client'
 
@@ -10,10 +10,16 @@ export const CurrentUser = createParamDecorator(
 
     const prisma = new PrismaClient()
 
-    return prisma?.user?.findUnique({
+    const user = await prisma?.user?.findUnique({
       where: {
         id: userId
       }
     })
+
+    if (!user) {
+      throw new UnauthorizedException("Authenticate first")
+    }
+
+    return user;
   }
 )

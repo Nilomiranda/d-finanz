@@ -27,4 +27,10 @@ export class UsersResolver {
   async confirmAccount(@Args('input') args: ConfirmAccountInput) {
     return this.usersService.confirmAccount(args)
   }
+
+  @Mutation(returns => User)
+  @UseGuards(AuthGuard)
+  async deleteAccount(@Args('id') id: string, @CurrentUser() user: User) {
+    return this.usersService.deleteOne(id, user)
+  }
 }

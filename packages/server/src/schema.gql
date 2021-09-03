@@ -27,6 +27,7 @@ type Query {
 type Mutation {
   createUser(input: CreateUserInput!): User!
   confirmAccount(input: ConfirmAccountInput!): User!
+  deleteAccount(id: String!): User!
   createSession(input: CreateSessionInput!): Session!
 }
 
