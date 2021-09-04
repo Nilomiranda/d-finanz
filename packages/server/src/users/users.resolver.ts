@@ -31,6 +31,7 @@ export class UsersResolver {
   @Mutation(returns => User)
   @UseGuards(AuthGuard)
   async deleteAccount(@Args('id') id: string, @CurrentUser() user: User) {
+    console.log("DELETING ACCOUNT")
     return this.usersService.deleteOne(id, user)
   }
 }

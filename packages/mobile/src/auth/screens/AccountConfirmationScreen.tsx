@@ -59,7 +59,7 @@ const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScr
       <Heading textAlign={"center"} mb={10}>Confirm your account</Heading>
 
       <Box mb={5}>
-        <Input label={"Email"} placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} />
+        <Input label={"Email"} autoCapitalize="none" placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} />
       </Box>
 
       <Box mb={5}>

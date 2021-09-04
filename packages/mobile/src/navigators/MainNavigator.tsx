@@ -59,6 +59,9 @@ function MainNavigator() {
   if (data?.user?.email) {
     return (
       <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="AccountConfirmation" component={AccountConfirmationScreen} />
         <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     )
