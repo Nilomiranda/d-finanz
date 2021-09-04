@@ -14,15 +14,23 @@ const AccountConfirmationMutation = `
   }
 `
 
+const ResendAccountConfirmationMutation = `
+  mutation($email: String!) {
+    resendConfirmationCode(email: $email)
+  }
+`
+
 type AccountConfirmationScreenProps = NativeStackScreenProps<MainStackParamsList, 'AccountConfirmation'>
 
 const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScreenProps) => {
   const [email, setEmail] = useState(route?.params?.email || '')
   const [code, setCode] = useState('')
   const [confirmingAccount, setConfirmingAccount] = useState(false)
+  const [resendingCode, setResendingCode] = useState(false)
 
   const toast = useToast()
   const [, confirmAccount] = useMutation(AccountConfirmationMutation)
+  const [, resendConfirmationCode] = useMutation(ResendAccountConfirmationMutation)
 
   const handleAccountConfirmed = () => {
     navigation?.navigate('SignIn', { email })
@@ -54,6 +62,13 @@ const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScr
     }
   }
 
+  const handleResendCodePress = async () => {
+    setResendingCode(true)
+    resendConfirmationCode({ email })?.finally(() => {
+      setResendingCode(false)
+    })
+  }
+
   return (
     <VStack paddingX={3} justifyContent={"center"} height={"100%"}>
       <Heading textAlign={"center"} mb={10}>Confirm your account</Heading>
@@ -62,8 +77,12 @@ const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScr
         <Input label={"Email"} autoCapitalize="none" placeholder={"email@domain.com"} value={email} onChangeText={(value) => setEmail(value)} />
       </Box>
 
-      <Box mb={5}>
+      <Box mb={1}>
         <Input label={"Code"} placeholder={"0000"} value={code} onChangeText={(value) => setCode(value)} />
+      </Box>
+
+      <Box mb={5} ml="auto">
+        <Button size="sm" onPress={handleResendCodePress} isLoading={resendingCode} isLoadingText="Resending code" variant="link" colorScheme="primary">Resend code</Button>
       </Box>
 
       <Box mb={5}>

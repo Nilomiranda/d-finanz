@@ -49,6 +49,23 @@ export class UsersService {
     })
   }
 
+  async resendConfirmationCode(email: string) {
+    const prisma = await getPrismaClient()
+    const user = await prisma.user.findUnique({ where: { email } })
+
+    if (!user) {
+      throw new NotFoundException('Account not found')
+    }
+
+    user.confirmationCode = generateRandomCode()
+
+    sendEmailWithTemplate(ACCOUNT_CONFIRMATION_TEMPLATE_NUMBER, [{ Email: user?.email, Name: user?.name }], 'DFinanz account confirmation', { email: user?.email, name: user?.name, confirmationCode: user?.confirmationCode }).catch(err => {
+      console.error('Error sending account confirmation error', err)
+    })
+
+    return true
+  }
+
   async getOne(id: string) {
     const prisma = getPrismaClient()
     const user = await prisma.user.findUnique({

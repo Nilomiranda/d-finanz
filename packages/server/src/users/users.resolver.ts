@@ -28,6 +28,11 @@ export class UsersResolver {
     return this.usersService.confirmAccount(args)
   }
 
+  @Mutation(returns => Boolean)
+  async resendConfirmationCode(@Args('email') email: string) {
+    return this.usersService.resendConfirmationCode(email)
+  }
+
   @Mutation(returns => User)
   @UseGuards(AuthGuard)
   async deleteAccount(@Args('id') id: string, @CurrentUser() user: User) {
