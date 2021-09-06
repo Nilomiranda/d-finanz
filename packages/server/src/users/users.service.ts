@@ -8,6 +8,7 @@ import {ConfirmAccountInput} from "./dto/confirmAccountInput";
 import {NotFoundException} from "@nestjs/common";
 import { ForbiddenError } from "apollo-server-errors";
 import { RecoverAccountInput } from "./dto/recoverAccountInput";
+import { UpdatePasswordInput } from "./dto/updatePasswordInput";
 
 const ACCOUNT_CONFIRMATION_TEMPLATE_NUMBER = 3125538
 const ACCOUNT_RECOVERY_EMAIL_TEMPLATE_NUMBER = 3151724
@@ -140,6 +141,26 @@ export class UsersService {
       data: {
         recoveryCode: null,
         password: await this.hashPassword(newPassword),
+      }
+    })
+  }
+
+  async updatePassword(args: UpdatePasswordInput, requestingUser: User) {
+    const { currentPassword, newPassword } = args
+
+    const prisma = getPrismaClient()
+
+
+    if (!(await bcrypt?.compare(currentPassword, requestingUser?.password))) {
+      throw new ForbiddenError('Wrong password')
+    }
+
+    return prisma.user.update({
+      where: {
+        email: requestingUser?.email,
+      },
+      data: {
+        password: await this.hashPassword(newPassword)
       }
     })
   }

@@ -7,6 +7,7 @@ import {UseGuards} from "@nestjs/common";
 import {AuthGuard} from "../sessions/auth.guard";
 import {CurrentUser} from "./currentUser";
 import { RecoverAccountInput } from "./dto/recoverAccountInput";
+import { UpdatePasswordInput } from "./dto/updatePasswordInput";
 
 @Resolver(of => User)
 export class UsersResolver {
@@ -48,5 +49,11 @@ export class UsersResolver {
   @Mutation(returns => User)
   async recoverAccount(@Args('input') args: RecoverAccountInput) {
     return this.usersService.recoverAccount(args)
+  }
+
+  @Mutation(returns => User)
+  @UseGuards(AuthGuard)
+  async updatePassword(@Args('input') args: UpdatePasswordInput, @CurrentUser() user: User) {
+    return this.usersService.updatePassword(args, user)
   }
 }

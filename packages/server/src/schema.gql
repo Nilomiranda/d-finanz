@@ -31,6 +31,7 @@ type Mutation {
   deleteAccount(id: String!): User!
   requestRecoveryCode(email: String!): Boolean!
   recoverAccount(input: RecoverAccountInput!): User!
+  updatePassword(input: UpdatePasswordInput!): User!
   createSession(input: CreateSessionInput!): Session!
 }
 
@@ -48,6 +49,11 @@ input ConfirmAccountInput {
 input RecoverAccountInput {
   code: String!
   email: String!
+  newPassword: String
+}
+
+input UpdatePasswordInput {
+  currentPassword: String
   newPassword: String
 }
 
