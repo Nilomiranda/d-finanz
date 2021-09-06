@@ -37,6 +37,10 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
     navigation?.navigate('AccountConfirmation')
   }
 
+  const handleNavigateToAccountRecovery = () => {
+    navigation?.navigate('AccountRecovery', { email })
+  }
+
   const handleSignedIn = (signInResponse: { data: { createSession: { token: string; user: User } } }) => {
     AsyncStorage.setItem('FINANZ_JWT_TOKEN', signInResponse?.data?.createSession?.token)
     navigation?.navigate('Home')
@@ -84,6 +88,10 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
 
       <Box>
         <Link _text={{ textDecoration: 'underline' }} onPress={handleNavigateToAccountConfirmation}>Confirm my account</Link>
+      </Box>
+
+      <Box mt={4}>
+        <Link _text={{ textDecoration: 'underline' }} onPress={handleNavigateToAccountRecovery}>Forgot my password</Link>
       </Box>
     </VStack>
   )

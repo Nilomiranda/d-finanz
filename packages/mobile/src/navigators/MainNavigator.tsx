@@ -7,11 +7,13 @@ import TabNavigator from "./TabNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useQuery} from "urql";
 import LoadingScreen from '../auth/screens/LoadingScreen';
+import RecoverAccountScreen from '../auth/screens/RecoverAccountScreen';
 
 export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
   SignUp: undefined;
   AccountConfirmation: { email: string } | undefined;
+  AccountRecovery: { email: string } | undefined;
   Home: undefined
   Loading: undefined
 }
@@ -61,6 +63,7 @@ function MainNavigator() {
       <Stack.Screen name="SignIn" component={SignInScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="AccountConfirmation" component={AccountConfirmationScreen} />
+      <Stack.Screen name="AccountRecovery" component={RecoverAccountScreen} />
       <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
