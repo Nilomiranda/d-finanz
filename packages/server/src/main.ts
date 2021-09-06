@@ -4,7 +4,16 @@ import { PrismaClient } from '@prisma/client'
 import {PrismaClientType} from "./_types/prismaClientType";
 import {ValidationPipe} from "@nestjs/common";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+  log: [
+    { level: 'query', emit: 'event' }
+  ]
+})
+
+prisma.$on('query', (event) => {
+  console.log('Query:', event?.query)
+  console.log('Duration: ', `${event?.duration} ms`)
+})
 
 export function getPrismaClient(): PrismaClientType {
   return prisma;

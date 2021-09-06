@@ -20,6 +20,25 @@ type Session {
   user: User!
 }
 
+type Tag {
+  id: String!
+  name: String!
+  userId: String!
+}
+
+type FinancialRecord {
+  id: String!
+  amount: Float!
+  userId: String!
+  type: FinancialRecordType!
+  tags: [Tag!]!
+}
+
+enum FinancialRecordType {
+  INCOME
+  EXPENSE
+}
+
 type Query {
   user: User!
 }
@@ -33,6 +52,7 @@ type Mutation {
   recoverAccount(input: RecoverAccountInput!): User!
   updatePassword(input: UpdatePasswordInput!): User!
   createSession(input: CreateSessionInput!): Session!
+  createNewFinancialRecord(input: CreateFinancialRecordInput!): FinancialRecord!
 }
 
 input CreateUserInput {
@@ -60,4 +80,10 @@ input UpdatePasswordInput {
 input CreateSessionInput {
   email: String
   password: String
+}
+
+input CreateFinancialRecordInput {
+  amount: Float!
+  type: FinancialRecordType!
+  tags: [String!]!
 }

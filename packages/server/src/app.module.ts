@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import {join} from "path";
 import {UsersModule} from "./users/users.module";
 import {SessionsModule} from "./sessions/sessions.module";
+import { FinancialRecordsModule } from './financialRecords/financialRecords.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import {SessionsModule} from "./sessions/sessions.module";
     }),
     UsersModule,
     SessionsModule,
+    FinancialRecordsModule
   ],
   controllers: [AppController],
   providers: [AppService],

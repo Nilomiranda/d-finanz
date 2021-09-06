@@ -35,6 +35,16 @@ model FinancialRecord {
     id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
     amount Int
     userId   String    @db.ObjectId
-    createdAt DateTime
+    createdAt DateTime @default(now())
     type FinancialRecordType
+    tagIDs String[] @db.Array(ObjectId)
+    tags Tag[] @relation(fields: [tagIDs])
+}
+
+model Tag {
+  id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  name String
+  userId String @db.ObjectId
+  financialRecordIDs String[] @db.Array(ObjectId)
+  financialRecords FinancialRecord[] @relation(fields: [financialRecordIDs])
 }
