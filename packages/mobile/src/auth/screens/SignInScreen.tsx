@@ -6,6 +6,7 @@ import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {MainStackParamsList} from "../../navigators/MainNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from '../../interfaces/user';
+import { FINANZ_JWT_TOKEN } from '../../constants/asyncStorage';
 
 const SignInMutation = `
   mutation ($email: String!, $password: String!) {
@@ -42,8 +43,8 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
   }
 
   const handleSignedIn = (signInResponse: { data: { createSession: { token: string; user: User } } }) => {
-    AsyncStorage.setItem('FINANZ_JWT_TOKEN', signInResponse?.data?.createSession?.token)
-    navigation?.navigate('Home')
+    AsyncStorage.setItem(FINANZ_JWT_TOKEN, signInResponse?.data?.createSession?.token)
+    navigation?.push('Home', { screen: 'AddIncome' })
   }
 
   const handleSignIn = async () => {

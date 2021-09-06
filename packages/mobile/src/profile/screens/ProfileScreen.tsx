@@ -2,9 +2,13 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Box, Button, Text, VStack, useToast } from 'native-base'
 import React, { useState } from 'react'
 import { useMutation, useQuery } from 'urql'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmationDialog from '../../components/overlay/ConfirmationDialog'
 import { MainStackParamsList } from '../../navigators/MainNavigator'
 import ProfileMenu from '../components/ProfileMenu'
+import { FINANZ_JWT_TOKEN } from '../../constants/asyncStorage';
+import { ProfileStackParamsList } from '../../navigators/ProfileNavigator';
+import { BottomTabParamsList } from '../../navigators/TabNavigator';
 
 const CurrentUserQuery = `
   query CurrentUser {
@@ -25,7 +29,7 @@ const DeleteAccountMutation = `
   }
 `
 
-type ProfileScreenProps = NativeStackScreenProps<MainStackParamsList, 'Home'>
+type ProfileScreenProps = NativeStackScreenProps<BottomTabParamsList, 'ProfileNavigator'>
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const toast = useToast()
@@ -52,10 +56,16 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         duration: 5000,
         isClosable: true
       })
-      navigation?.navigate('SignIn')
+      AsyncStorage?.removeItem(FINANZ_JWT_TOKEN)
+      navigation?.pop()
     }).finally(() => {
       setDeleting(false)
     })
+  }
+
+  const handleSignOutPress = () => {
+    AsyncStorage?.removeItem(FINANZ_JWT_TOKEN)
+    navigation?.pop()
   }
 
   return (
@@ -65,10 +75,10 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       <Button mt={4} colorScheme="red" variant="outline" isLoading={deleting} isLoadingText="Deleting account" onPress={() => setAccountDeletionConfirmationDialogIsOpen(true)} size="sm">Delete account</Button>
 
       <Box mt={4}>
-        <ProfileMenu />
+        <ProfileMenu navigation={navigation} />
       </Box>
 
-      <Button mt="auto">Sign out</Button>
+      <Button mt="auto" onPress={handleSignOutPress}>Sign out</Button>
 
       <ConfirmationDialog
         isOpen={accountDeletionConfirmationDialogIsOpen}
