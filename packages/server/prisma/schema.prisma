@@ -18,10 +18,11 @@ enum UserStatus {
 
 model User {
     id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-    email String @unique @db
+    email String @unique
     name String
     password String
     confirmationCode String
+    recoveryCode String?
     status UserStatus
 }
 

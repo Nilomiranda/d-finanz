@@ -29,6 +29,8 @@ type Mutation {
   confirmAccount(input: ConfirmAccountInput!): User!
   resendConfirmationCode(email: String!): Boolean!
   deleteAccount(id: String!): User!
+  requestRecoveryCode(email: String!): Boolean!
+  recoverAccount(input: RecoverAccountInput!): User!
   createSession(input: CreateSessionInput!): Session!
 }
 
@@ -41,6 +43,12 @@ input CreateUserInput {
 input ConfirmAccountInput {
   code: String!
   email: String!
+}
+
+input RecoverAccountInput {
+  code: String!
+  email: String!
+  newPassword: String
 }
 
 input CreateSessionInput {
