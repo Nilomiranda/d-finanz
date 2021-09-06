@@ -38,13 +38,22 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   }
 
   const handleSignUp = async () => {
-    try {
-      setCreatingAccount(true)
-      await signUp({
-        name,
-        email,
-        password
-      })
+    setCreatingAccount(true)
+    signUp({
+      name,
+      email,
+      password
+    }).then((result) => {
+      if (result?.error) {
+        toast.show({
+          description: 'Error trying to create your account. Please try again in few moments',
+          status: 'error',
+          isClosable: true,
+          duration: 5000,
+        })
+        return
+      }
+
       handleAccountCreated()
       toast.show({
         description: 'Account created! Check your email for a confirmation code.',
@@ -52,16 +61,9 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
         isClosable: true,
         duration: 5000,
       })
-    } catch (err) {
-      toast.show({
-        description: 'Error trying to create your account. Please try again in few moments',
-        status: 'error',
-        isClosable: true,
-        duration: 5000,
-      })
-    } finally {
+    }).finally(() => {
       setCreatingAccount(false)
-    }
+    })
   }
 
   return (

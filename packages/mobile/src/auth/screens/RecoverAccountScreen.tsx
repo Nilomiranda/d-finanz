@@ -43,7 +43,18 @@ const RecoverAccountScreen = ({ navigation }: RecoverAccountScreenProps) => {
   const handleRequestRecoverPress = async () => {
     try {
       setRequesting(true)
-      await requestAccountRecoveryCode({ email })
+      const results = await requestAccountRecoveryCode({ email })
+      if (results?.error) {
+        toast.show({
+          status: 'error',
+          description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
+          duration: 5000,
+          isClosable: true,
+        })
+
+        return
+      }
+
       setCodeRequested(true)
       toast.show({
         status: 'info',
@@ -84,7 +95,19 @@ const RecoverAccountScreen = ({ navigation }: RecoverAccountScreenProps) => {
 
     try {
       setRequesting(true)
-      await resetPassword({ email, code, newPassword })
+      const results = await resetPassword({ email, code, newPassword })
+
+      if (results?.error) {
+        toast.show({
+          status: 'error',
+          description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
+          duration: 5000,
+          isClosable: true,
+        })
+
+        return
+      }
+
       toast.show({
         status: 'info',
         description: 'Password successfully set. You may login now',

@@ -39,10 +39,22 @@ const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScr
   const handleAccountConfirmation = async () => {
     try {
       setConfirmingAccount(true)
-      await confirmAccount({
+      const results = await confirmAccount({
         code,
         email,
       })
+
+      if (results?.error) {
+        toast.show({
+          description: 'Error confirming your account. Please try again in few moments',
+          status: 'error',
+          isClosable: true,
+          duration: 5000,
+        })
+
+        return
+      }
+
       handleAccountConfirmed()
       toast.show({
         description: 'Account confirmed! You are now ready to log in.',

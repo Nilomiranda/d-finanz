@@ -13,7 +13,7 @@ const Input = (props: InputProps) => {
     <Box>
       { label ? <Text fontWeight={"bold"} marginBottom={1.5} color={errorMessage ? "red.500" : "black"}>{label}</Text> : null }
 
-      <NativeInput {...props} variant={"outline"} />
+      <NativeInput {...props} variant={"outline"} autoCorrect={false} />
 
       { errorMessage ? <Text fontSize={"sm"} marginTop={1.5} color={"red.500"}>{errorMessage}</Text> : null }
     </Box>

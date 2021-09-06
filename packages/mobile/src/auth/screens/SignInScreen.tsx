@@ -53,6 +53,17 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
         email,
         password
       })
+
+      if (signInResults?.error) {
+        toast.show({
+          description: 'Error signing you in. Please try again in few moments',
+          status: 'error',
+          isClosable: true,
+          duration: 5000,
+        })
+        return
+      }
+
       handleSignedIn(signInResults as any)
     } catch (err) {
       toast.show({
