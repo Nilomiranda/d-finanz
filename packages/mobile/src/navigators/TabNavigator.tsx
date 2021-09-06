@@ -3,13 +3,13 @@ import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-nav
 import AddIncomeScreen from '../finances/screens/AddIncomeScreen';
 import AddExpenseScreen from '../finances/screens/AddExpenseScreen';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
-import { RouteProp } from '@react-navigation/core';
-import ProfileScreen from '../profile/screens/ProfileScreen';
+import { NavigatorScreenParams, RouteProp } from '@react-navigation/core';
+import ProfileNavigator, { ProfileStackParamsList } from './ProfileNavigator';
 
 export type BottomTabParamsList = {
   AddIncome: undefined
   AddExpense: undefined
-  Profile: undefined
+  ProfileNavigator: NavigatorScreenParams<ProfileStackParamsList>
 }
 
 
@@ -17,10 +17,10 @@ const Tab = createBottomTabNavigator<BottomTabParamsList>()
 
 const setTabBarScreenOptions = ({ route }: { route: RouteProp<BottomTabParamsList> }): BottomTabNavigationOptions => ({
   tabBarIcon: ({ focused }) => {
-    const routeNameToIconName: Record<string, string> = {
+    const routeNameToIconName: Record<keyof BottomTabParamsList, string> = {
       AddIncome: 'attach-money',
       AddExpense: 'money-off',
-      Profile: 'person'
+      ProfileNavigator: 'person'
     }
 
     return <MaterialIcon name={routeNameToIconName[route?.name]} color={focused ? "black" : "lightgray"} size={30} />
@@ -32,9 +32,9 @@ const setTabBarScreenOptions = ({ route }: { route: RouteProp<BottomTabParamsLis
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={setTabBarScreenOptions}>
-      <Tab.Screen name="AddIncome" component={AddIncomeScreen} />
-      <Tab.Screen name="AddExpense" component={AddExpenseScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="AddIncome" component={AddIncomeScreen} options={{ title: 'Add Income' }} />
+      <Tab.Screen name="AddExpense" component={AddExpenseScreen} options={{ title: 'Add Expense' }} />
+      <Tab.Screen name="ProfileNavigator" component={ProfileNavigator} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   )
 }

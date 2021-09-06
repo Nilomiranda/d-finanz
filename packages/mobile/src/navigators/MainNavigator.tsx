@@ -3,18 +3,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from "../auth/screens/SignInScreen";
 import SignUpScreen from "../auth/screens/SignUpScreen";
 import AccountConfirmationScreen from "../auth/screens/AccountConfirmationScreen";
-import TabNavigator from "./TabNavigator";
+import TabNavigator, { BottomTabParamsList } from "./TabNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useQuery} from "urql";
 import LoadingScreen from '../auth/screens/LoadingScreen';
 import RecoverAccountScreen from '../auth/screens/RecoverAccountScreen';
+import { NavigatorScreenParams } from '@react-navigation/core';
 
 export type MainStackParamsList = {
   SignIn: { email: string } | undefined;
   SignUp: undefined;
   AccountConfirmation: { email: string } | undefined;
   AccountRecovery: { email: string } | undefined;
-  Home: undefined
+  Home: NavigatorScreenParams<BottomTabParamsList>
   Loading: undefined
 }
 
@@ -29,7 +30,7 @@ const CurrentUserQuery = `
 
 const Stack = createNativeStackNavigator<MainStackParamsList>();
 
-function MainNavigator() {
+const MainNavigator = () => {
   const [token, setToken] = useState('')
 
   const [currentUserQueryResult, refetchCurrentUser] = useQuery({
