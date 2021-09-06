@@ -6,6 +6,7 @@ import {ConfirmAccountInput} from "./dto/confirmAccountInput";
 import {UseGuards} from "@nestjs/common";
 import {AuthGuard} from "../sessions/auth.guard";
 import {CurrentUser} from "./currentUser";
+import { RecoverAccountInput } from "./dto/recoverAccountInput";
 
 @Resolver(of => User)
 export class UsersResolver {
@@ -36,7 +37,16 @@ export class UsersResolver {
   @Mutation(returns => User)
   @UseGuards(AuthGuard)
   async deleteAccount(@Args('id') id: string, @CurrentUser() user: User) {
-    console.log("DELETING ACCOUNT")
     return this.usersService.deleteOne(id, user)
+  }
+
+  @Mutation(returns => Boolean)
+  async requestRecoveryCode(@Args('email') email: string) {
+    return this.usersService.requestAccountRecoveryCode(email)
+  }
+
+  @Mutation(returns => User)
+  async recoverAccount(@Args('input') args: RecoverAccountInput) {
+    return this.usersService.recoverAccount(args)
   }
 }

@@ -7,8 +7,10 @@ import {sendEmailWithTemplate} from "../services/mailjet";
 import {ConfirmAccountInput} from "./dto/confirmAccountInput";
 import {NotFoundException} from "@nestjs/common";
 import { ForbiddenError } from "apollo-server-errors";
+import { RecoverAccountInput } from "./dto/recoverAccountInput";
 
 const ACCOUNT_CONFIRMATION_TEMPLATE_NUMBER = 3125538
+const ACCOUNT_RECOVERY_EMAIL_TEMPLATE_NUMBER = 3151724
 
 export class UsersService {
   async create(args: CreateUserInput) {
@@ -85,6 +87,61 @@ export class UsersService {
     }
 
     return prisma.user.delete({ where: { id } })
+  }
+
+  async requestAccountRecoveryCode(email: string): Promise<boolean> {
+    const prisma = getPrismaClient()
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email
+      }
+    })
+
+    if (user) {
+      const recoveryCode = generateRandomCode()
+      sendEmailWithTemplate(ACCOUNT_RECOVERY_EMAIL_TEMPLATE_NUMBER, [{Email: user?.email, Name: user?.name}], 'DFinanz - Account recovery request', { name: user?.name, recoveryCode }).catch(err => {
+        console.error('Error sending account recovery email', err)
+      })
+
+      await prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          recoveryCode,
+        }
+      })
+    }
+
+    return true
+  }
+
+  async recoverAccount(args: RecoverAccountInput) {
+    const { email, code, newPassword } = args
+
+    const prisma = getPrismaClient()
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+        recoveryCode: code,
+      }
+    })
+
+    if (!user) {
+      throw new NotFoundException()
+    }
+
+    return prisma.user.update({
+      where: {
+        email: user?.email
+      },
+      data: {
+        recoveryCode: null,
+        password: await this.hashPassword(newPassword),
+      }
+    })
   }
 
   hashPassword(password: string): Promise<string> {
