@@ -15,7 +15,7 @@ registerEnumType(FinancialRecordType, {
   name: 'FinancialRecordType',
 });
 
-@ObjectType()
+@ObjectType('financialRecordType')
 export class FinancialRecord {
   @Field(() => String, { nullable: false })
   id: string

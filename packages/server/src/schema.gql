@@ -26,7 +26,7 @@ type Tag {
   userId: String!
 }
 
-type FinancialRecord {
+type financialRecordType {
   id: String!
   amount: Float!
   name: String!
@@ -40,8 +40,26 @@ enum FinancialRecordType {
   EXPENSE
 }
 
+type FinancialRecordConnection {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
+}
+
+type Edge {
+  node: financialRecordType!
+  cursor: String!
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+}
+
 type Query {
   user: User!
+  financialRecords(before: String, after: String, first: Int, last: Int): FinancialRecordConnection!
 }
 
 type Mutation {
@@ -53,7 +71,7 @@ type Mutation {
   recoverAccount(input: RecoverAccountInput!): User!
   updatePassword(input: UpdatePasswordInput!): User!
   createSession(input: CreateSessionInput!): Session!
-  createNewFinancialRecord(input: CreateFinancialRecordInput!): FinancialRecord!
+  createNewFinancialRecord(input: CreateFinancialRecordInput!): financialRecordType!
 }
 
 input CreateUserInput {

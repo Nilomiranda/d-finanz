@@ -47,4 +47,18 @@ export class FinancialRecordsService {
 
     return { newTags: newTagsData, existingTags }
   }
+
+  async list(requestingUser: User) {
+    const prisma = getPrismaClient()
+
+    const records = await prisma.financialRecord.findMany({
+      where: {
+        userId: requestingUser?.id,
+      }
+    })
+
+    console.log('records', records)
+
+    return records
+  }
 }
