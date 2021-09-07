@@ -4,6 +4,7 @@ import { PrismaClientType } from "../_types/prismaClientType";
 import {getPrismaClient} from "../main";
 import { CreateFinancialRecordInput } from "./dto/createFinancialRecordInput";
 import { FinancialRecordType } from ".prisma/client";
+import { FinancialRecord } from "./models/financialRecord.model";
 
 export class FinancialRecordsService {
   async create(args: CreateFinancialRecordInput, requestingUser: User) {
@@ -57,8 +58,16 @@ export class FinancialRecordsService {
       }
     })
 
-    console.log('records', records)
-
     return records
+  }
+
+  async delete(financialRecord: FinancialRecord) {
+    const prisma = getPrismaClient()
+
+    return prisma?.financialRecord?.delete({
+      where: {
+        id: financialRecord?.id
+      }
+    })
   }
 }

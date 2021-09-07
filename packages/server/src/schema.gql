@@ -72,6 +72,7 @@ type Mutation {
   updatePassword(input: UpdatePasswordInput!): User!
   createSession(input: CreateSessionInput!): Session!
   createNewFinancialRecord(input: CreateFinancialRecordInput!): financialRecordType!
+  deleteFinancialRecord(id: String!): financialRecordType!
 }
 
 input CreateUserInput {

@@ -10,6 +10,7 @@ import { CreateFinancialRecordInput } from "./dto/createFinancialRecordInput";
 import { FinancialRecordsService } from "./financialRecords.service";
 import { FinancialRecordConnection } from "./models/financialRecord.connection";
 import { FinancialRecord } from "./models/financialRecord.model";
+import { TargetFinancialRecord } from "./targetFinancialRecord";
 
 @Resolver(() => FinancialRecord)
 export class FinancialRecordsResolver {
@@ -20,6 +21,13 @@ export class FinancialRecordsResolver {
   @UseGuards(AuthGuard)
   async createNewFinancialRecord(@Args('input') args: CreateFinancialRecordInput, @CurrentUser() user: User) {
     return this.financialRecordsService.create(args, user)
+  }
+
+  @Mutation(() => FinancialRecord)
+  @UseGuards(AuthGuard)
+  async deleteFinancialRecord(@Args('id') id: string, @TargetFinancialRecord() financialRecord: FinancialRecord) {
+    // id is used in @TargetFinancialRecord decorator
+    return this.financialRecordsService.delete(financialRecord)
   }
 
   @Query(() => FinancialRecordConnection)
