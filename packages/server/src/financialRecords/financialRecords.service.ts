@@ -5,6 +5,7 @@ import {getPrismaClient} from "../main";
 import { CreateFinancialRecordInput } from "./dto/createFinancialRecordInput";
 import { FinancialRecordType } from ".prisma/client";
 import { FinancialRecord } from "./models/financialRecord.model";
+import { UpdateFinancialRecordInput } from "./dto/updateFinancialRecordInput";
 
 export class FinancialRecordsService {
   async create(args: CreateFinancialRecordInput, requestingUser: User) {
@@ -19,6 +20,29 @@ export class FinancialRecordsService {
         amount,
         type: amount < 0 ? FinancialRecordType.EXPENSE : type,
         userId: requestingUser?.id,
+        tags: {
+          create: newTags,
+          connect: existingTags?.map(existingTag => ({ id: existingTag?.id }))
+        }
+      }
+    })
+  }
+
+  async update(financialRecord: FinancialRecord, requestingUser: User, newData: UpdateFinancialRecordInput) {
+    const { amount, name, type, tags } = newData
+    const { id, amount: oldAmount, name: oldName, type: oldType } = financialRecord
+    const prisma = getPrismaClient()
+
+    const { newTags, existingTags } = await this.handleTags(requestingUser, prisma, tags)
+
+    return prisma?.financialRecord?.update({
+      where: {
+        id,
+      },
+      data: {
+        name: name || oldName,
+        type: (amount || oldAmount) < 0 ? FinancialRecordType.EXPENSE : type || oldType,
+        amount: amount || oldAmount,
         tags: {
           create: newTags,
           connect: existingTags?.map(existingTag => ({ id: existingTag?.id }))

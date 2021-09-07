@@ -74,6 +74,7 @@ type Mutation {
   createSession(input: CreateSessionInput!): Session!
   createNewFinancialRecord(input: CreateFinancialRecordInput!): financialRecordType!
   deleteFinancialRecord(id: String!): financialRecordType!
+  updateFinancialRecord(input: UpdateFinancialRecordInput!): financialRecordType!
 }
 
 input CreateUserInput {
@@ -108,4 +109,12 @@ input CreateFinancialRecordInput {
   name: String!
   type: FinancialRecordType!
   tags: [String!]!
+}
+
+input UpdateFinancialRecordInput {
+  id: String!
+  amount: Float
+  name: String
+  type: FinancialRecordType
+  tags: [String!] = []
 }
