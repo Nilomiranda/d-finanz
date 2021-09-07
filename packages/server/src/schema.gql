@@ -29,6 +29,7 @@ type Tag {
 type FinancialRecord {
   id: String!
   amount: Float!
+  name: String!
   userId: String!
   type: FinancialRecordType!
   tags: [Tag!]!
@@ -84,6 +85,7 @@ input CreateSessionInput {
 
 input CreateFinancialRecordInput {
   amount: Float!
+  name: String!
   type: FinancialRecordType!
   tags: [String!]!
 }

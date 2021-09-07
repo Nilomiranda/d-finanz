@@ -7,13 +7,14 @@ import { FinancialRecordType } from ".prisma/client";
 
 export class FinancialRecordsService {
   async create(args: CreateFinancialRecordInput, requestingUser: User) {
-    const { amount, type, tags } = args
+    const { amount, type, tags, name } = args
     const prisma = getPrismaClient()
 
     const { newTags, existingTags } = await this.handleTags(requestingUser, prisma, tags)
 
     return prisma.financialRecord.create({
       data: {
+        name,
         amount,
         type: amount < 0 ? FinancialRecordType.EXPENSE : type,
         userId: requestingUser?.id,

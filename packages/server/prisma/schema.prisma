@@ -34,6 +34,7 @@ enum FinancialRecordType {
 model FinancialRecord {
     id String @id @default(dbgenerated()) @map("_id") @db.ObjectId
     amount Int
+    name String
     userId   String    @db.ObjectId
     createdAt DateTime @default(now())
     type FinancialRecordType

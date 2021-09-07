@@ -28,6 +28,11 @@ export class FinancialRecord {
   @IsString({ always: true })
   @IsNotEmpty({ always: true })
   @Field(() => String, { nullable: false })
+  name: string
+
+  @IsString({ always: true })
+  @IsNotEmpty({ always: true })
+  @Field(() => String, { nullable: false })
   userId: string
 
   @IsEnum(FinancialRecordType, { always: true })
