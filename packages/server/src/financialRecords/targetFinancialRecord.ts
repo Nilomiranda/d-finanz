@@ -2,7 +2,7 @@ import {createParamDecorator, ExecutionContext, NotFoundException, UnauthorizedE
 import {GqlExecutionContext} from "@nestjs/graphql";
 import { PrismaClient } from '@prisma/client'
 
-export const TargetFinancialRecord = createParamDecorator(
+export const OwnedFinancialRecord = createParamDecorator(
   async (data: unknown, context: ExecutionContext) => {
     const gqlContext = GqlExecutionContext.create(context);
 

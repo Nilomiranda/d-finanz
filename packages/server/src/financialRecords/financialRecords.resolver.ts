@@ -10,7 +10,7 @@ import { CreateFinancialRecordInput } from "./dto/createFinancialRecordInput";
 import { FinancialRecordsService } from "./financialRecords.service";
 import { FinancialRecordConnection } from "./models/financialRecord.connection";
 import { FinancialRecord } from "./models/financialRecord.model";
-import { TargetFinancialRecord } from "./targetFinancialRecord";
+import { OwnedFinancialRecord } from "./targetFinancialRecord";
 
 @Resolver(() => FinancialRecord)
 export class FinancialRecordsResolver {
@@ -25,7 +25,7 @@ export class FinancialRecordsResolver {
 
   @Mutation(() => FinancialRecord)
   @UseGuards(AuthGuard)
-  async deleteFinancialRecord(@Args('id') id: string, @TargetFinancialRecord() financialRecord: FinancialRecord) {
+  async deleteFinancialRecord(@Args('id') id: string, @OwnedFinancialRecord() financialRecord: FinancialRecord) {
     // id is used in @TargetFinancialRecord decorator
     return this.financialRecordsService.delete(financialRecord)
   }
@@ -34,6 +34,13 @@ export class FinancialRecordsResolver {
   @UseGuards(AuthGuard)
   async financialRecords(@CurrentUser() user: User, @Args({ type: () => ConnectionArguments }) args: ConnectionArguments) {
     return connectionFromPromisedArray(this.financialRecordsService?.list(user), args)
+  }
+
+  @Query(() => FinancialRecord)
+  @UseGuards(AuthGuard)
+  async financialRecord(@Args('id') id: string, @OwnedFinancialRecord() financialRecord: FinancialRecord) {
+    // id is used in @TargetFinancialRecord decorator
+    return financialRecord
   }
 
   @ResolveField()

@@ -60,6 +60,7 @@ type PageInfo {
 type Query {
   user: User!
   financialRecords(before: String, after: String, first: Int, last: Int): FinancialRecordConnection!
+  financialRecord(id: String!): financialRecordType!
 }
 
 type Mutation {
