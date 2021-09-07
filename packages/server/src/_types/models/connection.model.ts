@@ -2,7 +2,7 @@ import { Type } from "@nestjs/common";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Connection as RelayConnection, Edge as RelayEdge, PageInfo as RelayPageInfo } from "graphql-relay";
 
-export function Connection<GraphQLObject>(GenericClass?: Type<GraphQLObject>) {
+export function Connection<GraphQLObject>(GenericClass?: Type<GraphQLObject>): any {
   @ObjectType({ isAbstract: true })
   class PageInfo implements RelayPageInfo {
     @Field(() => String, { nullable: true })
