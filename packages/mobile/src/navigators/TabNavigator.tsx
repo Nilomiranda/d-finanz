@@ -1,14 +1,14 @@
 import React from 'react'
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AddIncomeScreen from '../finances/screens/AddIncomeScreen';
-import AddExpenseScreen from '../finances/screens/AddExpenseScreen';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/core';
 import ProfileNavigator, { ProfileStackParamsList } from './ProfileNavigator';
+import IncomeNavigator, { IncomeStackParamsList } from './IncomeNavigator';
+import ExpensesNavigator, { ExpensesStackParamsList } from './ExpensesNavigator';
 
 export type BottomTabParamsList = {
-  AddIncome: undefined
-  AddExpense: undefined
+  IncomeNavigator: NavigatorScreenParams<IncomeStackParamsList>
+  ExpenseNavigator: NavigatorScreenParams<ExpensesStackParamsList>
   ProfileNavigator: NavigatorScreenParams<ProfileStackParamsList>
 }
 
@@ -18,8 +18,8 @@ const Tab = createBottomTabNavigator<BottomTabParamsList>()
 const setTabBarScreenOptions = ({ route }: { route: RouteProp<BottomTabParamsList> }): BottomTabNavigationOptions => ({
   tabBarIcon: ({ focused }) => {
     const routeNameToIconName: Record<keyof BottomTabParamsList, string> = {
-      AddIncome: 'attach-money',
-      AddExpense: 'money-off',
+      IncomeNavigator: 'attach-money',
+      ExpenseNavigator: 'money-off',
       ProfileNavigator: 'person'
     }
 
@@ -32,8 +32,8 @@ const setTabBarScreenOptions = ({ route }: { route: RouteProp<BottomTabParamsLis
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={setTabBarScreenOptions}>
-      <Tab.Screen name="AddIncome" component={AddIncomeScreen} options={{ title: 'Add Income' }} />
-      <Tab.Screen name="AddExpense" component={AddExpenseScreen} options={{ title: 'Add Expense' }} />
+      <Tab.Screen name="IncomeNavigator" component={IncomeNavigator} options={{ title: 'Income' }} />
+      <Tab.Screen name="ExpenseNavigator" component={ExpensesNavigator} options={{ title: 'Expense' }} />
       <Tab.Screen name="ProfileNavigator" component={ProfileNavigator} options={{ title: 'Profile' }} />
     </Tab.Navigator>
   )
