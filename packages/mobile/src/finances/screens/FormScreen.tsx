@@ -6,7 +6,13 @@ import { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
 import { useMutation } from 'urql'
 import Chip from '../../components/data/Chip'
 import Input from '../../components/forms/Input'
+import { FinancialRecordType } from '../../interfaces/financialRecord'
 import { ExpensesStackParamsList } from '../../navigators/ExpensesNavigator'
+
+const financialRecordTypeToActionName: Record<string, string> = {
+  [FinancialRecordType.EXPENSE]: 'expense',
+  [FinancialRecordType.INCOME]: 'income'
+}
 
 type FormScreenProps = NativeStackScreenProps<ExpensesStackParamsList, 'Form'>
 
@@ -46,23 +52,16 @@ const FormScreen = ({ navigation, route }: FormScreenProps) => {
 
     try {
       setSaving(true)
-      console.log('payload', {
-        amount: parsedAmount * -1,
-        type,
-        tags,
-        name
-      })
       const res = await createExpense({
         amount: parsedAmount,
         type,
         tags,
         name
       })
-      console.log('res', res)
 
       if (res?.error) {
         toast.show({
-          description: 'Error creating expense, please try again.',
+          description: `Error creating ${financialRecordTypeToActionName[type]}, please try again.`,
           status: 'error',
           isClosable: true,
           duration: 5000,
@@ -71,16 +70,15 @@ const FormScreen = ({ navigation, route }: FormScreenProps) => {
       }
 
       toast.show({
-        description: `Saved ${name} expense!`,
+        description: `Saved ${name} ${financialRecordTypeToActionName[type]}!`,
         status: 'success',
         isClosable: true,
         duration: 5000,
       })
       navigation?.goBack()
     } catch (err) {
-      console.error('error creating expense', err)
       toast.show({
-        description: 'Error creating expense, please try again.',
+        description: `Error creating ${financialRecordTypeToActionName[type]}, please try again.`,
         status: 'error',
         isClosable: true,
         duration: 5000,
