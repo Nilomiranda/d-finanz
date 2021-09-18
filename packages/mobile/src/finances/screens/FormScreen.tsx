@@ -1,23 +1,143 @@
-import { Box, Button, VStack } from 'native-base'
-import React from 'react'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { gql } from '@urql/core'
+import { Box, Button, HStack, VStack, Text, useToast } from 'native-base'
+import React, { useEffect, useState } from 'react'
+import { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
+import { useMutation } from 'urql'
+import Chip from '../../components/data/Chip'
 import Input from '../../components/forms/Input'
+import { ExpensesStackParamsList } from '../../navigators/ExpensesNavigator'
 
-const FormScreen = () => {
+type FormScreenProps = NativeStackScreenProps<ExpensesStackParamsList, 'Form'>
+
+const CreateExpenseMutation = gql`
+  mutation ($amount: Float!, $name: String!, $tags: [String!]!, $type: FinancialRecordType!) {
+    createNewFinancialRecord(input: {
+      amount: $amount,
+      name: $name,
+      tags: $tags,
+      type: $type
+    }) {
+      amount
+      type
+      id
+      tags {
+        name
+      }
+    }
+  }
+`
+
+const FormScreen = ({ navigation, route }: FormScreenProps) => {
+  const { params: { type } } = route
+
+  const toast = useToast()
+
+  const [amount, setAmount] = useState('')
+  const [name, setName] = useState('')
+  const [tag, setTag] = useState('')
+  const [tags, setTags] = useState<string[]>([])
+  const [saving, setSaving] = useState(false)
+
+  const [, createExpense] = useMutation(CreateExpenseMutation)
+
+  const handleSavePress = async () => {
+    const parsedAmount = amount ? Number(amount.replace(',', '.')) : 0
+
+    try {
+      setSaving(true)
+      console.log('payload', {
+        amount: parsedAmount * -1,
+        type,
+        tags,
+        name
+      })
+      const res = await createExpense({
+        amount: parsedAmount,
+        type,
+        tags,
+        name
+      })
+      console.log('res', res)
+
+      if (res?.error) {
+        toast.show({
+          description: 'Error creating expense, please try again.',
+          status: 'error',
+          isClosable: true,
+          duration: 5000,
+        })
+        return
+      }
+
+      toast.show({
+        description: `Saved ${name} expense!`,
+        status: 'success',
+        isClosable: true,
+        duration: 5000,
+      })
+      navigation?.goBack()
+    } catch (err) {
+      console.error('error creating expense', err)
+      toast.show({
+        description: 'Error creating expense, please try again.',
+        status: 'error',
+        isClosable: true,
+        duration: 5000,
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleTagInputKeyPress = (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+    const { key } = event?.nativeEvent
+
+    if (key === ',') {
+      const newTag = tag?.replace(',', '')?.toLowerCase()
+      if (newTag && !tags?.includes(newTag)) {
+        setTags([...tags, newTag])
+      }
+    }
+  }
+
+  const handleTagDelete = (tagToDelete: string) => {
+    const tagsToRemain = tags?.filter(tag => tag !== tagToDelete)
+    setTags(tagsToRemain)
+  }
+
+  useEffect(() => {
+    setTag('')
+  }, [tags])
+
   return (
     <VStack p={4}>
       <Box mb={4}>
-        <Input type="number" label="Amount" placeholder="Amount" />
+        <Input type="number" label="Amount" placeholder="Amount" keyboardType="decimal-pad" value={amount} onChangeText={value => setAmount(value)} />
       </Box>
 
       <Box mb={4}>
-        <Input type="text" label="Name" placeholder="Name" />
+        <Input type="text" label="Name" placeholder="Name" value={name} onChangeText={value => setName(value)} />
       </Box>
 
       <Box mb={4}>
-        <Input type="text" label="Tags" placeholder="Tags" />
+        <Input type="text" label="Tags" placeholder="example, another, tag1" value={tag} onChangeText={value => setTag(value)} onKeyPress={handleTagInputKeyPress} />
       </Box>
 
-      <Button mb={4}>Save</Button>
+      {
+        tags?.length ?
+        (
+          <HStack my={8}>
+            { tags?.map((tag, index) => (
+              <Box key={index} mr={2}>
+                <Chip text={tag} closable onClose={() => handleTagDelete(tag)} />
+              </Box>
+            )) }
+          </HStack>
+        ) : null
+      }
+
+      <Button isLoading={saving} isLoadingText="Saving" mb={4} onPress={handleSavePress}>Save</Button>
     </VStack>
   )
 }

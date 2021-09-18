@@ -5,7 +5,6 @@ export enum FinancialRecordType {
   INCOME = 'INCOME',
   EXPENSE = 'EXPENSE'
 }
-
 export interface FinancialRecord {
   id: string
   amount: number
