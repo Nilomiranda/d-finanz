@@ -1,34 +1,34 @@
 import React, {useState} from 'react'
-import {Box, Button, Checkbox, Heading, HStack, Link, Radio, Text, useToast, VStack} from "native-base";
+import {Box, Button, Heading, HStack, Link, Text, useToast, VStack} from "native-base";
 import Input from '../../components/forms/Input'
-import {useMutation} from "urql";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {MainStackParamsList} from "../../navigators/MainNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from '../../interfaces/user';
 import { FINANZ_JWT_TOKEN } from '../../constants/asyncStorage';
-
-const SignInMutation = `
-  mutation ($email: String!, $password: String!) {
-    createSession(input: { email: $email, password: $password }) {
-      user {
-        email
-        name
-      }
-      token
-    }
-  }
-`
+import {graphql, useMutation} from "react-relay";
 
 type SignInScreenProps = NativeStackScreenProps<MainStackParamsList, 'SignIn'>
 
 const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
   const [email, setEmail] = useState(route?.params?.email || '')
   const [password, setPassword] = useState('')
-  const [signingIn, setSigningIn] = useState(false)
 
   const toast = useToast()
-  const [, signIn] = useMutation(SignInMutation)
+
+  const SignInMutation = graphql`
+    mutation SignInScreenMutation ($email: String!, $password: String!) {
+      createSession(input: {email: $email, password: $password}) {
+        user {
+          email
+          name
+        }
+        token
+      }
+    }
+  `
+
+  const [signIn, signingIn] = useMutation(SignInMutation)
 
   const handleNavigateToSignUp = () => {
     navigation?.navigate('SignUp')
@@ -42,40 +42,29 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
     navigation?.navigate('AccountRecovery', { email })
   }
 
-  const handleSignedIn = (signInResponse: { data: { createSession: { token: string; user: User } } }) => {
-    AsyncStorage.setItem(FINANZ_JWT_TOKEN, signInResponse?.data?.createSession?.token)
+  const handleSignedIn = (signInResponse: { createSession?: { token: string; user: User } }) => {
+    AsyncStorage.setItem(FINANZ_JWT_TOKEN, signInResponse?.createSession?.token || '')
     navigation?.push('Home', { screen: 'IncomeNavigator', params: { screen: 'List' } })
   }
 
   const handleSignIn = async () => {
-    try {
-      setSigningIn(true)
-      const signInResults = await signIn({
+    signIn({
+      variables: {
         email,
         password
-      })
-
-      if (signInResults?.error) {
+      },
+      onCompleted(mutationResult: { createSession?: { token: string; user: User } }) {
+        handleSignedIn(mutationResult)
+      },
+      onError() {
         toast.show({
           description: 'Error signing you in. Please try again in few moments',
           status: 'error',
           isClosable: true,
           duration: 5000,
         })
-        return
       }
-
-      handleSignedIn(signInResults as any)
-    } catch (err) {
-      toast.show({
-        description: 'Error signing you in. Please try again in few moments',
-        status: 'error',
-        isClosable: true,
-        duration: 5000,
-      })
-    } finally {
-      setSigningIn(false)
-    }
+    })
   }
 
   return (
