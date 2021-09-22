@@ -44,7 +44,7 @@ const SignInScreen = ({ route, navigation }: SignInScreenProps) => {
 
   const handleSignedIn = (signInResponse: { data: { createSession: { token: string; user: User } } }) => {
     AsyncStorage.setItem(FINANZ_JWT_TOKEN, signInResponse?.data?.createSession?.token)
-    navigation?.push('Home', { screen: 'AddIncome' })
+    navigation?.push('Home', { screen: 'IncomeNavigator', params: { screen: 'List' } })
   }
 
   const handleSignIn = async () => {
