@@ -1,29 +1,29 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {Box, Button, Heading, HStack, Link, VStack, Text, useToast} from "native-base";
 import Input from "../../components/forms/Input";
-import {useMutation} from "urql";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {MainStackParamsList} from "../../navigators/MainNavigator";
-
-const SignUpMutation = `
-  mutation($name: String!, $email: String!, $password: String!) {
-    createUser(input: { name: $name, email: $email, password: $password }) {
-      name
-      email
-    }
-  }
-`
+import {graphql, useMutation} from "react-relay";
 
 type SignUpScreenProps = NativeStackScreenProps<MainStackParamsList, 'SignUp'>
 
 const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   const toast = useToast()
-  const [, signUp] = useMutation(SignUpMutation)
 
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [creatingAccount, setCreatingAccount] = useState(false)
+
+  const SignUpMutation = graphql`
+    mutation SignUpScreenMutation ($name: String!, $email: String!, $password: String!) {
+      createUser(input: { name: $name, email: $email, password: $password }) {
+        name
+        email
+      }
+    }
+  `
+
+  const [signUp, signingUp] = useMutation(SignUpMutation)
 
   const handleNavigateToSignIn = () => {
     navigation?.navigate('SignIn')
@@ -38,31 +38,29 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   }
 
   const handleSignUp = async () => {
-    setCreatingAccount(true)
     signUp({
-      name,
-      email,
-      password
-    }).then((result) => {
-      if (result?.error) {
+      variables: {
+        name,
+        email,
+        password
+      },
+      onCompleted() {
+        handleAccountCreated()
+        toast.show({
+          description: 'Account created! Check your email for a confirmation code.',
+          status: 'info',
+          isClosable: true,
+          duration: 5000,
+        })
+      },
+      onError() {
         toast.show({
           description: 'Error trying to create your account. Please try again in few moments',
           status: 'error',
           isClosable: true,
           duration: 5000,
         })
-        return
       }
-
-      handleAccountCreated()
-      toast.show({
-        description: 'Account created! Check your email for a confirmation code.',
-        status: 'info',
-        isClosable: true,
-        duration: 5000,
-      })
-    }).finally(() => {
-      setCreatingAccount(false)
     })
   }
 
@@ -87,7 +85,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
       </Box>
 
       <Box mb={5}>
-        <Button size={"lg"} onPress={handleSignUp} isLoading={creatingAccount} isLoadingText={"Creating account"}>Create account</Button>
+        <Button size={"lg"} onPress={handleSignUp} isLoading={signingUp} isLoadingText={"Creating account"}>Create account</Button>
       </Box>
 
       <HStack>
