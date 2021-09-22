@@ -1,0 +1,120 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String
+  name: String
+  email: String
+  confirmationCode: String
+  status: UserStatus!
+}
+
+enum UserStatus {
+  ACTIVE
+  UNCONFIRMED_ACCOUNT
+}
+
+type Session {
+  token: String!
+  user: User!
+}
+
+type Tag {
+  id: String!
+  name: String!
+  userId: String!
+}
+
+type financialRecordType {
+  id: String!
+  amount: Float!
+  name: String!
+  userId: String!
+  type: FinancialRecordType!
+  tags: [Tag!]!
+}
+
+enum FinancialRecordType {
+  INCOME
+  EXPENSE
+}
+
+type FinancialRecordConnection {
+  edges: [Edge!]!
+  pageInfo: PageInfo!
+}
+
+type Edge {
+  node: financialRecordType!
+  cursor: String!
+}
+
+type PageInfo {
+  startCursor: String
+  endCursor: String
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+}
+
+type Query {
+  user: User!
+  financialRecords(before: String, after: String, first: Int, last: Int): FinancialRecordConnection!
+  financialRecord(id: String!): financialRecordType!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  confirmAccount(input: ConfirmAccountInput!): User!
+  resendConfirmationCode(email: String!): Boolean!
+  deleteAccount(id: String!): User!
+  requestRecoveryCode(email: String!): Boolean!
+  recoverAccount(input: RecoverAccountInput!): User!
+  updatePassword(input: UpdatePasswordInput!): User!
+  createSession(input: CreateSessionInput!): Session!
+  createNewFinancialRecord(input: CreateFinancialRecordInput!): financialRecordType!
+  deleteFinancialRecord(id: String!): financialRecordType!
+  updateFinancialRecord(input: UpdateFinancialRecordInput!): financialRecordType!
+}
+
+input CreateUserInput {
+  name: String
+  email: String
+  password: String
+}
+
+input ConfirmAccountInput {
+  code: String!
+  email: String!
+}
+
+input RecoverAccountInput {
+  code: String!
+  email: String!
+  newPassword: String
+}
+
+input UpdatePasswordInput {
+  currentPassword: String
+  newPassword: String
+}
+
+input CreateSessionInput {
+  email: String
+  password: String
+}
+
+input CreateFinancialRecordInput {
+  amount: Float!
+  name: String!
+  type: FinancialRecordType!
+  tags: [String!]!
+}
+
+input UpdateFinancialRecordInput {
+  id: String!
+  amount: Float
+  name: String
+  type: FinancialRecordType
+  tags: [String!] = []
+}
