@@ -3,31 +3,29 @@ import { Box, Button, Heading, VStack, useToast } from 'native-base'
 import Input from '../../components/forms/Input'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { ProfileStackParamsList } from '../../navigators/ProfileNavigator'
-import { useMutation } from 'urql'
-
-const UpdatePasswordMutation = `
-mutation ($currentPassword: String!, $newPassword: String!) {
-  updatePassword (input: {
-    currentPassword: $currentPassword,
-    newPassword: $newPassword,
-  }) {
-    email
-  }
-}
-`
+import {graphql, useMutation} from "react-relay";
 
 type UpdatePasswordScreenProps = NativeStackScreenProps<ProfileStackParamsList, 'UpdatePassword'>
 
 const UpdatePasswordScreen = ({ navigation }: UpdatePasswordScreenProps) => {
+  const UpdatePasswordMutation = graphql`
+    mutation UpdatePasswordScreenMutation ($currentPassword: String!, $newPassword: String!) {
+      updatePassword (input: {
+        currentPassword: $currentPassword,
+        newPassword: $newPassword,
+      }) {
+        email
+      }
+    }
+  `
+
   const toast = useToast()
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
-  const [updatingPassword, setUpdatingPassword] = useState(false)
-
-  const [, updatePassword] = useMutation(UpdatePasswordMutation)
+  const [updatePassword, updatingPassword] = useMutation(UpdatePasswordMutation)
 
   const isFormValid = (): boolean => {
     if (!newPassword || !newPasswordConfirmation || (newPasswordConfirmation !== newPassword)) {
@@ -48,36 +46,25 @@ const UpdatePasswordScreen = ({ navigation }: UpdatePasswordScreenProps) => {
       return
     }
 
-    try {
-      setUpdatingPassword(true)
-      const results = await updatePassword({ currentPassword, newPassword })
-
-      if (results?.error) {
+    updatePassword({
+      variables: { currentPassword, newPassword },
+      onCompleted() {
         toast.show({
-          status: 'error',
-          description: 'Error updating your password. Check if your current password is correct.',
-          duration: 7000,
+          status: 'success',
+          description: 'Password updated',
+          duration: 5000,
         })
 
-        return
+        navigation?.navigate('Profile')
+      },
+      onError() {
+        toast.show({
+          status: 'error',
+          description: 'An unexpected error occurred while updating your password. Please try again',
+          duration: 7000,
+        })
       }
-
-      toast.show({
-        status: 'success',
-        description: 'Password updated',
-        duration: 5000,
-      })
-
-      navigation?.navigate('Profile')
-    } catch (err) {
-      toast.show({
-        status: 'error',
-        description: 'An unexpected error occurred while updating your password. Please try again',
-        duration: 7000,
-      })
-    } finally {
-      setUpdatingPassword(false)
-    }
+    })
   }
 
   return (
