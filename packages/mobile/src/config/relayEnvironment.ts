@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FINANZ_JWT_TOKEN} from "../constants/asyncStorage";
 
 // const API_URL = 'http://localhost:8090/graphql'
-const API_URL = 'https://2753-2804-14c-c4-856a-150f-2131-fbea-c9fd.ngrok.io/graphql'
+const API_URL = 'https://7599-2804-14c-bf48-4464-789e-b7ca-e863-8161.ngrok.io/graphql'
 
 async function fetchGraphQL(text: string, variables: any) {
   const token = await AsyncStorage.getItem(FINANZ_JWT_TOKEN);

@@ -1,27 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Box, Button, Heading, VStack, useToast } from 'native-base'
 import React, { useState } from 'react'
-import { useMutation } from 'urql'
 import Input from '../../components/forms/Input'
 import { MainStackParamsList } from '../../navigators/MainNavigator'
-
-const RequestAccountRecoveryMutation = `
-  mutation($email: String!) {
-    requestRecoveryCode(email: $email)
-  }
-`
-
-const ResetPasswordMutation = `
-  mutation ($email: String!, $code: String!, $newPassword: String!) {
-    recoverAccount(input: {
-      email: $email,
-      code: $code,
-      newPassword: $newPassword
-    }) {
-      email
-    }
-  }
-`
+import RequestAccountRecoveryMutation from '../mutations/RequestAccountRecovery'
+import ResetPasswordMutation from '../mutations/ResetPassword'
+import {useMutation} from "react-relay";
 
 type RecoverAccountScreenProps = NativeStackScreenProps<MainStackParamsList, 'AccountRecovery'>
 
@@ -29,49 +13,37 @@ const RecoverAccountScreen = ({ navigation }: RecoverAccountScreenProps) => {
   // states: ask code > send new password
   const toast = useToast()
 
-  const [, requestAccountRecoveryCode] = useMutation(RequestAccountRecoveryMutation)
-  const [, resetPassword] = useMutation(ResetPasswordMutation)
+  const [requestAccountRecoveryCode, requestingAccountRecoveryCode] = useMutation(RequestAccountRecoveryMutation)
+  const [resetPassword, resettingPassword] = useMutation(ResetPasswordMutation)
 
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('')
 
-  const [requesting, setRequesting] = useState(false)
   const [codeRequested, setCodeRequested] = useState(false)
 
   const handleRequestRecoverPress = async () => {
-    try {
-      setRequesting(true)
-      const results = await requestAccountRecoveryCode({ email })
-      if (results?.error) {
+    requestAccountRecoveryCode({
+      variables: { email },
+      onCompleted() {
         toast.show({
-          status: 'error',
-          description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
+          status: 'info',
+          description: 'Check your email for a recovery code',
           duration: 5000,
           isClosable: true,
         })
-
-        return
+        setCodeRequested(true)
+      },
+      onError() {
+        toast.show({
+          status: 'error',
+          description: 'An unexpected error occurred while requesting your account recovery code. Please try again.',
+          duration: 5000,
+          isClosable: true,
+        })
       }
-
-      setCodeRequested(true)
-      toast.show({
-        status: 'info',
-        description: 'Check your email for a recovery code',
-        duration: 5000,
-        isClosable: true,
-      })
-    } catch (err) {
-      toast.show({
-        status: 'error',
-        description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
-        duration: 5000,
-        isClosable: true,
-      })
-    } finally {
-      setRequesting(false)
-    }
+    })
   }
 
   const isFormValid = (): boolean => {
@@ -93,38 +65,26 @@ const RecoverAccountScreen = ({ navigation }: RecoverAccountScreenProps) => {
       return
     }
 
-    try {
-      setRequesting(true)
-      const results = await resetPassword({ email, code, newPassword })
-
-      if (results?.error) {
+    resetPassword({
+      variables: { email, code, newPassword },
+      onCompleted() {
         toast.show({
-          status: 'error',
-          description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
+          status: 'info',
+          description: 'Password successfully set. You may login now',
           duration: 5000,
           isClosable: true,
         })
-
-        return
+        navigation?.navigate('SignIn')
+      },
+      onError() {
+        toast.show({
+          status: 'error',
+          description: 'An unexpected error occurred while requesting your account recovery code. Please try again.',
+          duration: 5000,
+          isClosable: true,
+        })
       }
-
-      toast.show({
-        status: 'info',
-        description: 'Password successfully set. You may login now',
-        duration: 5000,
-        isClosable: true,
-      })
-      navigation?.navigate('SignIn')
-    } catch (err) {
-      toast.show({
-        status: 'error',
-        description: 'An unexpected error occured while requesting your account recovery code. Please try again.',
-        duration: 5000,
-        isClosable: true,
-      })
-    } finally {
-      setRequesting(false)
-    }
+    })
   }
 
   return (
@@ -157,12 +117,12 @@ const RecoverAccountScreen = ({ navigation }: RecoverAccountScreenProps) => {
       { !codeRequested ?
         (
           <Box mb={5}>
-            <Button size={"lg"} onPress={handleRequestRecoverPress} isLoading={requesting}>Request recovery code</Button>
+            <Button size={"lg"} onPress={handleRequestRecoverPress} isLoading={requestingAccountRecoveryCode || resettingPassword}>Request recovery code</Button>
           </Box>
         ) :
         (
           <Box mb={5}>
-            <Button size={"lg"} mt={4} onPress={handleResetPasswordPress} isLoading={requesting}>Reset password</Button>
+            <Button size={"lg"} mt={4} onPress={handleResetPasswordPress} isLoading={requestingAccountRecoveryCode || resettingPassword}>Reset password</Button>
           </Box>
         )
       }
