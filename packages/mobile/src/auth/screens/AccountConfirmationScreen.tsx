@@ -1,83 +1,63 @@
 import React, {useState} from 'react'
 import {Box, Button, Heading, VStack, useToast} from "native-base";
 import Input from "../../components/forms/Input";
-import {useMutation} from "urql";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {MainStackParamsList} from "../../navigators/MainNavigator";
-
-const AccountConfirmationMutation = `
-  mutation($code: String!, $email: String!) {
-    createUser(input: { code: $code, email: $email }) {
-      name
-      email
-    }
-  }
-`
-
-const ResendAccountConfirmationMutation = `
-  mutation($email: String!) {
-    resendConfirmationCode(email: $email)
-  }
-`
+import AccountConfirmationMutation from '../mutations/AccountConfirmation'
+import ResendAccountConfirmationMutation from "../mutations/ResendAccountConfirmation";
+import {useMutation} from "react-relay";
 
 type AccountConfirmationScreenProps = NativeStackScreenProps<MainStackParamsList, 'AccountConfirmation'>
 
 const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScreenProps) => {
   const [email, setEmail] = useState(route?.params?.email || '')
   const [code, setCode] = useState('')
-  const [confirmingAccount, setConfirmingAccount] = useState(false)
-  const [resendingCode, setResendingCode] = useState(false)
 
   const toast = useToast()
-  const [, confirmAccount] = useMutation(AccountConfirmationMutation)
-  const [, resendConfirmationCode] = useMutation(ResendAccountConfirmationMutation)
+  const [confirmAccount, confirmingAccount] = useMutation(AccountConfirmationMutation)
+  const [resendConfirmationCode, resendingConfirmationCode] = useMutation(ResendAccountConfirmationMutation)
 
   const handleAccountConfirmed = () => {
     navigation?.navigate('SignIn', { email })
   }
 
   const handleAccountConfirmation = async () => {
-    try {
-      setConfirmingAccount(true)
-      const results = await confirmAccount({
+    confirmAccount({
+      variables: {
         code,
         email,
-      })
-
-      if (results?.error) {
+      },
+      onCompleted() {
+        handleAccountConfirmed()
+        toast.show({
+          description: 'Account confirmed! You are now ready to log in.',
+          status: 'info',
+          isClosable: true,
+          duration: 5000,
+        })
+      },
+      onError() {
         toast.show({
           description: 'Error confirming your account. Please try again in few moments',
           status: 'error',
           isClosable: true,
           duration: 5000,
         })
-
-        return
       }
-
-      handleAccountConfirmed()
-      toast.show({
-        description: 'Account confirmed! You are now ready to log in.',
-        status: 'info',
-        isClosable: true,
-        duration: 5000,
-      })
-    } catch (err) {
-      toast.show({
-        description: 'Error confirming your account. Please try again in few moments',
-        status: 'error',
-        isClosable: true,
-        duration: 5000,
-      })
-    } finally {
-      setConfirmingAccount(false)
-    }
+    })
   }
 
   const handleResendCodePress = async () => {
-    setResendingCode(true)
-    resendConfirmationCode({ email })?.finally(() => {
-      setResendingCode(false)
+    resendConfirmationCode({
+      variables: { email },
+      onCompleted() {
+        toast.show({
+          description: `Code sent to ${email}`,
+          status: 'info',
+          isClosable: true,
+          duration: 5000,
+        })
+      }
     })
   }
 
@@ -94,7 +74,7 @@ const AccountConfirmationScreen = ({ route, navigation }: AccountConfirmationScr
       </Box>
 
       <Box mb={5} ml="auto">
-        <Button size="sm" onPress={handleResendCodePress} isLoading={resendingCode} isLoadingText="Resending code" variant="link" colorScheme="primary">Resend code</Button>
+        <Button size="sm" onPress={handleResendCodePress} isLoading={resendingConfirmationCode} isLoadingText="Resending code" variant="link" colorScheme="primary">Resend code</Button>
       </Box>
 
       <Box mb={5}>
