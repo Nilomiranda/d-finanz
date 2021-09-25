@@ -1,31 +1,26 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type SignInScreenMutationVariables = {
+    email: string;
+    password: string;
+};
+export type SignInScreenMutationResponse = {
+    readonly createSession: {
+        readonly user: {
+            readonly email: string | null;
+            readonly name: string | null;
+        };
+        readonly token: string;
+    };
+};
+export type SignInScreenMutation = {
+    readonly response: SignInScreenMutationResponse;
+    readonly variables: SignInScreenMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type SignInScreenMutationVariables = {|
-  email: string,
-  password: string,
-|};
-export type SignInScreenMutationResponse = {|
-  +createSession: {|
-    +user: {|
-      +email: ?string,
-      +name: ?string,
-    |},
-    +token: string,
-  |}
-|};
-export type SignInScreenMutation = {|
-  variables: SignInScreenMutationVariables,
-  response: SignInScreenMutationResponse,
-|};
-*/
 
 
 /*
@@ -43,7 +38,7 @@ mutation SignInScreenMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -145,7 +140,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '498743500bf76a977696b0437e23f9bf';
-
-module.exports = node;
+(node as any).hash = '498743500bf76a977696b0437e23f9bf';
+export default node;

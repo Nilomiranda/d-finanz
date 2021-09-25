@@ -4,5 +4,6 @@ module.exports = {
   src: "./src",
   schema: "./graphql/schema.gql",
   exclude: ["**/node_modules/**", "**/__mocks__/**", "**/__generated__/**"],
-  extensions: ["js", "jsx", "ts", "tsx"]
+  extensions: ["js", "jsx", "ts", "tsx"],
+  language: "typescript"
 }

@@ -1,29 +1,24 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type SignUpScreenMutationVariables = {
+    name: string;
+    email: string;
+    password: string;
+};
+export type SignUpScreenMutationResponse = {
+    readonly createUser: {
+        readonly name: string | null;
+        readonly email: string | null;
+    };
+};
+export type SignUpScreenMutation = {
+    readonly response: SignUpScreenMutationResponse;
+    readonly variables: SignUpScreenMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type SignUpScreenMutationVariables = {|
-  name: string,
-  email: string,
-  password: string,
-|};
-export type SignUpScreenMutationResponse = {|
-  +createUser: {|
-    +name: ?string,
-    +email: ?string,
-  |}
-|};
-export type SignUpScreenMutation = {|
-  variables: SignUpScreenMutationVariables,
-  response: SignUpScreenMutationResponse,
-|};
-*/
 
 
 /*
@@ -39,7 +34,7 @@ mutation SignUpScreenMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -139,7 +134,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '4ba6c389248f56defe3322b2f094edd1';
-
-module.exports = node;
+(node as any).hash = '4ba6c389248f56defe3322b2f094edd1';
+export default node;

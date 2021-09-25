@@ -1,24 +1,19 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type ResendAccountConfirmationMutationVariables = {
+    email: string;
+};
+export type ResendAccountConfirmationMutationResponse = {
+    readonly resendConfirmationCode: boolean;
+};
+export type ResendAccountConfirmationMutation = {
+    readonly response: ResendAccountConfirmationMutationResponse;
+    readonly variables: ResendAccountConfirmationMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ResendAccountConfirmationMutationVariables = {|
-  email: string
-|};
-export type ResendAccountConfirmationMutationResponse = {|
-  +resendConfirmationCode: boolean
-|};
-export type ResendAccountConfirmationMutation = {|
-  variables: ResendAccountConfirmationMutationVariables,
-  response: ResendAccountConfirmationMutationResponse,
-|};
-*/
 
 
 /*
@@ -29,7 +24,7 @@ mutation ResendAccountConfirmationMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -79,7 +74,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '113b7bfb23f3600e914e938aeedabbbb';
-
-module.exports = node;
+(node as any).hash = '113b7bfb23f3600e914e938aeedabbbb';
+export default node;

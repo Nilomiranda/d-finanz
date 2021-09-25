@@ -1,24 +1,19 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type RequestAccountRecoveryMutationVariables = {
+    email: string;
+};
+export type RequestAccountRecoveryMutationResponse = {
+    readonly requestRecoveryCode: boolean;
+};
+export type RequestAccountRecoveryMutation = {
+    readonly response: RequestAccountRecoveryMutationResponse;
+    readonly variables: RequestAccountRecoveryMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type RequestAccountRecoveryMutationVariables = {|
-  email: string
-|};
-export type RequestAccountRecoveryMutationResponse = {|
-  +requestRecoveryCode: boolean
-|};
-export type RequestAccountRecoveryMutation = {|
-  variables: RequestAccountRecoveryMutationVariables,
-  response: RequestAccountRecoveryMutationResponse,
-|};
-*/
 
 
 /*
@@ -29,7 +24,7 @@ mutation RequestAccountRecoveryMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -79,7 +74,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '46b4dec2143b5f942809886d1b623545';
-
-module.exports = node;
+(node as any).hash = '46b4dec2143b5f942809886d1b623545';
+export default node;

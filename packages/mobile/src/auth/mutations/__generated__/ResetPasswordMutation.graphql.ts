@@ -1,28 +1,23 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type ResetPasswordMutationVariables = {
+    email: string;
+    code: string;
+    newPassword: string;
+};
+export type ResetPasswordMutationResponse = {
+    readonly recoverAccount: {
+        readonly email: string | null;
+    };
+};
+export type ResetPasswordMutation = {
+    readonly response: ResetPasswordMutationResponse;
+    readonly variables: ResetPasswordMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type ResetPasswordMutationVariables = {|
-  email: string,
-  code: string,
-  newPassword: string,
-|};
-export type ResetPasswordMutationResponse = {|
-  +recoverAccount: {|
-    +email: ?string
-  |}
-|};
-export type ResetPasswordMutation = {|
-  variables: ResetPasswordMutationVariables,
-  response: ResetPasswordMutationResponse,
-|};
-*/
 
 
 /*
@@ -37,7 +32,7 @@ mutation ResetPasswordMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -130,7 +125,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = '07d2bdafd9bd78ab5bbf12756a945163';
-
-module.exports = node;
+(node as any).hash = '07d2bdafd9bd78ab5bbf12756a945163';
+export default node;

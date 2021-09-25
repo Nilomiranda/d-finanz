@@ -1,28 +1,23 @@
-/**
- * @flow
- */
-
+/* tslint:disable */
 /* eslint-disable */
+// @ts-nocheck
 
-'use strict';
+import { ConcreteRequest } from "relay-runtime";
+export type AccountConfirmationMutationVariables = {
+    code: string;
+    email: string;
+};
+export type AccountConfirmationMutationResponse = {
+    readonly confirmAccount: {
+        readonly name: string | null;
+        readonly email: string | null;
+    };
+};
+export type AccountConfirmationMutation = {
+    readonly response: AccountConfirmationMutationResponse;
+    readonly variables: AccountConfirmationMutationVariables;
+};
 
-/*::
-import type { ConcreteRequest } from 'relay-runtime';
-export type AccountConfirmationMutationVariables = {|
-  code: string,
-  email: string,
-|};
-export type AccountConfirmationMutationResponse = {|
-  +confirmAccount: {|
-    +name: ?string,
-    +email: ?string,
-  |}
-|};
-export type AccountConfirmationMutation = {|
-  variables: AccountConfirmationMutationVariables,
-  response: AccountConfirmationMutationResponse,
-|};
-*/
 
 
 /*
@@ -37,7 +32,7 @@ mutation AccountConfirmationMutation(
 }
 */
 
-const node/*: ConcreteRequest*/ = (function(){
+const node: ConcreteRequest = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -121,7 +116,5 @@ return {
   }
 };
 })();
-// prettier-ignore
-(node/*: any*/).hash = 'a1ab9ecadf35f0aab2dfda2e941c23f8';
-
-module.exports = node;
+(node as any).hash = 'a1ab9ecadf35f0aab2dfda2e941c23f8';
+export default node;
