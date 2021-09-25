@@ -1,8 +1,6 @@
-import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { VStack } from 'native-base'
 import React from 'react'
-import { MainStackParamsList } from '../../navigators/MainNavigator'
-import { ProfileStackParamsList } from '../../navigators/ProfileNavigator'
 import { BottomTabParamsList } from '../../navigators/TabNavigator'
 import ProfileMenuOption from './ProfileMenuOption'
 
