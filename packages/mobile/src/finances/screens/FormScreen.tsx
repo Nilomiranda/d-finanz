@@ -1,13 +1,13 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { gql } from '@urql/core'
 import { Box, Button, HStack, VStack, Text, useToast } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native'
-import { useMutation } from 'urql'
 import Chip from '../../components/data/Chip'
 import Input from '../../components/forms/Input'
 import { FinancialRecordType } from '../../interfaces/financialRecord'
 import { ExpensesStackParamsList } from '../../navigators/ExpensesNavigator'
+import {useMutation} from "react-relay";
+import CreateExpenseMutation from '../mutations/CreateExpense'
 
 const financialRecordTypeToActionName: Record<string, string> = {
   [FinancialRecordType.EXPENSE]: 'expense',
@@ -15,24 +15,6 @@ const financialRecordTypeToActionName: Record<string, string> = {
 }
 
 type FormScreenProps = NativeStackScreenProps<ExpensesStackParamsList, 'Form'>
-
-const CreateExpenseMutation = gql`
-  mutation ($amount: Float!, $name: String!, $tags: [String!]!, $type: FinancialRecordType!) {
-    createNewFinancialRecord(input: {
-      amount: $amount,
-      name: $name,
-      tags: $tags,
-      type: $type
-    }) {
-      amount
-      type
-      id
-      tags {
-        name
-      }
-    }
-  }
-`
 
 const FormScreen = ({ navigation, route }: FormScreenProps) => {
   const { params: { type } } = route
@@ -43,49 +25,37 @@ const FormScreen = ({ navigation, route }: FormScreenProps) => {
   const [name, setName] = useState('')
   const [tag, setTag] = useState('')
   const [tags, setTags] = useState<string[]>([])
-  const [saving, setSaving] = useState(false)
 
-  const [, createExpense] = useMutation(CreateExpenseMutation)
+  const [createExpense, creatingExpense] = useMutation(CreateExpenseMutation)
 
   const handleSavePress = async () => {
     const parsedAmount = amount ? Number(amount.replace(',', '.')) : 0
 
-    try {
-      setSaving(true)
-      const res = await createExpense({
+    createExpense({
+      variables: {
         amount: parsedAmount,
         type,
         tags,
         name
-      })
-
-      if (res?.error) {
+      },
+      onCompleted() {
+        toast.show({
+          description: `Saved ${name} ${financialRecordTypeToActionName[type]}!`,
+          status: 'success',
+          isClosable: true,
+          duration: 5000,
+        })
+        navigation?.goBack()
+      },
+      onError() {
         toast.show({
           description: `Error creating ${financialRecordTypeToActionName[type]}, please try again.`,
           status: 'error',
           isClosable: true,
           duration: 5000,
         })
-        return
       }
-
-      toast.show({
-        description: `Saved ${name} ${financialRecordTypeToActionName[type]}!`,
-        status: 'success',
-        isClosable: true,
-        duration: 5000,
-      })
-      navigation?.goBack()
-    } catch (err) {
-      toast.show({
-        description: `Error creating ${financialRecordTypeToActionName[type]}, please try again.`,
-        status: 'error',
-        isClosable: true,
-        duration: 5000,
-      })
-    } finally {
-      setSaving(false)
-    }
+    })
   }
 
   const handleTagInputKeyPress = (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
@@ -135,7 +105,7 @@ const FormScreen = ({ navigation, route }: FormScreenProps) => {
         ) : null
       }
 
-      <Button isLoading={saving} isLoadingText="Saving" mb={4} onPress={handleSavePress}>Save</Button>
+      <Button isLoading={creatingExpense} isLoadingText="Saving" mb={4} onPress={handleSavePress}>Save</Button>
     </VStack>
   )
 }
